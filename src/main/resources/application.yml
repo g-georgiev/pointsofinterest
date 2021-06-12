@@ -17,4 +17,4 @@ spring:
 #            create-source: metadata
 #            scripts:
 #              action: create
-#              create-target: poi_database_create.sql
+#              create-target: 1.create_tables.sql

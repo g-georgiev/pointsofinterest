@@ -17,3 +17,4 @@ alter table poi_profiles add constraint FK4v2rrg1p0sp6upgx5k245jhn7 foreign key 
 alter table poi_profiles add constraint FK63oely9wnmk27b8pdrkl6rps9 foreign key (poi_id) references poi;
 alter table profiles add constraint FK410q61iev7klncmpqfuo85ivh foreign key (user_id) references users;
 alter table videos add constraint FK1hwfxiitdp2h0o7ibm8uaqes4 foreign key (poi_id) references poi;
+
