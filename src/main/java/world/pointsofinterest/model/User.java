@@ -11,7 +11,7 @@ import javax.persistence.Table;
 @Table(name = "users")
 public class User extends BaseEntity {
 
-    @Column(name = "username", nullable = false)
+    @Column(name = "username", nullable = false, unique = true)
     private String username;
 
     @OneToOne(mappedBy="user")

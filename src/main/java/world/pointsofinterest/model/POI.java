@@ -18,8 +18,11 @@ public class POI extends Post {
     @Column(name = "longitude", nullable = false)
     private final Double longitude;
 
-    @OneToMany(cascade = CascadeType.DETACH, mappedBy = "poi")
+    @OneToMany(mappedBy = "poi")
     private Set<Video> videoSet = new HashSet<>();
+
+    @OneToMany(mappedBy = "poi")
+    private Set<Image> imageSet = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "poi")
     private List<Comment> comments = new ArrayList<>();
@@ -51,16 +54,12 @@ public class POI extends Post {
         return longitude;
     }
 
-//    public String getDescription() {
-//        return super.getDescription();
-//    }
-//
-//    public Double getRating() {
-//        return super.getRating();
-//    }
-
     public Set<Category> getCategories() {
         return categories;
+    }
+
+    public Set<Image> getImageSet() {
+        return imageSet;
     }
 
     public Set<Video> getVideoSet() {
@@ -75,13 +74,9 @@ public class POI extends Post {
         return profiles;
     }
 
-//    public void setDescription(String description) {
-//        super.setDescription(description);
-//    }
-//
-//    public void addRating(Double rating) {
-//        super.addRating(rating);
-//    }
+    public void addImage(Image Image) {
+        imageSet.add(Image);
+    }
 
     public void addVideo(Video video) {
         videoSet.add(video);

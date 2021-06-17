@@ -1,7 +1,10 @@
 package world.pointsofinterest.repositories;
 
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 import world.pointsofinterest.model.Profile;
 
-public interface ProfileRepository extends CrudRepository<Profile, Long> {
+import java.util.List;
+
+public interface ProfileRepository extends JpaRepository<Profile, Long> {
+        List<Profile> findByIdIn(Long[] ids);
 }

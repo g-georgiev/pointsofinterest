@@ -15,14 +15,18 @@ public class Comment extends BaseEntity {
     private String comment;
 
     @ManyToOne
+    private final Profile poster;
+
+    @ManyToOne
     private final POI poi;
 
     @ManyToOne
     private final Profile profile;
 
-    public Comment(Long id, String comment, POI poi, Profile profile) {
+    public Comment(Long id, String comment, Profile poster, POI poi, Profile profile) {
         super(id);
         this.comment = comment;
+        this.poster = poster;
         this.poi = poi;
         this.profile = profile;
     }
@@ -41,5 +45,9 @@ public class Comment extends BaseEntity {
 
     public Profile getProfile() {
         return profile;
+    }
+
+    public Profile getPoster() {
+        return poster;
     }
 }

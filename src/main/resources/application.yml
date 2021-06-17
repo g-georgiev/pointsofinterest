@@ -3,7 +3,7 @@ spring:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:54320/poi
     username: poi_user
-    password: poiPass
+    password: poiPASS
   jpa:
     hibernate:
       ddl-auto: validate

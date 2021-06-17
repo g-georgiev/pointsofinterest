@@ -19,11 +19,14 @@ public class Profile extends Post {
     @OneToOne(cascade = CascadeType.ALL)
     private final User user;
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "poster")
+    private List<Comment> postedComments = new ArrayList<>();
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "profile")
-    private List<Comment> comments = new ArrayList<>();
+    private List<Comment> receivedComments = new ArrayList<>();
 
     @ManyToMany(mappedBy = "profiles")
-    private Set<POI> POIs = new HashSet<>();
+    private Set<POI> postedPOIs = new HashSet<>();
 
     public Profile(Long id, String description, Double rating, User user) {
         super(id, description, rating);
@@ -42,19 +45,27 @@ public class Profile extends Post {
         return user;
     }
 
-    public Set<POI> getPOIs() {
-        return POIs;
+    public Set<POI> getPostedPOIs() {
+        return postedPOIs;
     }
 
-    public List<Comment> getComments() {
-        return comments;
+    public List<Comment> getReceivedComments() {
+        return receivedComments;
+    }
+
+    public List<Comment> getPostedComments() {
+        return postedComments;
+    }
+
+    public void setPostedComments(List<Comment> postedComments) {
+        this.postedComments = postedComments;
     }
 
     public void addPOI(POI POI) {
-        POIs.add(POI);
+        postedPOIs.add(POI);
     }
 
     public void addComment(Comment comment) {
-        comments.add(comment);
+        receivedComments.add(comment);
     }
 }

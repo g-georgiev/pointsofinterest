@@ -10,7 +10,7 @@ public class Post extends BaseEntity {
     private String description;
 
     @Column(name = "rating", nullable = false)
-    private Double rating;
+    private Double rating = 0.0;
 
     public Post(Long id, String description, Double rating) {
         super(id);

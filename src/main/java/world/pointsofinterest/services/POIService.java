@@ -1,6 +1,8 @@
 package world.pointsofinterest.services;
 
-import world.pointsofinterest.model.POI;
+import world.pointsofinterest.api.v1.model.POIDTO;
 
-public interface POIService extends CrudService<POI, Long>{
+import java.util.List;
+
+public interface POIService extends CommonService<POIDTO, Long> {
 }
