@@ -1,5 +1,6 @@
 package world.pointsofinterest.api.v1.model;
 
+import java.net.URL;
 import java.util.Map;
 
 public class POIResponseDTO {
@@ -11,15 +12,15 @@ public class POIResponseDTO {
     private Boolean hasComments;
     //TODO: thumbnails
     //TODO: firstImage
-    private Map<Long, String> images;
-    private Map<Long, String> videos;
+    private Map<Long, URL> images;
+    private Map<Long, URL> videos;
     private Map<Long, String> categories;
     private Map<Long, String> profiles;
     private Map<String, String> links;
 
     public POIResponseDTO(Long id, Double latitude, Double longitude, String description,
-                          Double rating, Boolean hasComments, Map<Long, String> images,
-                          Map<Long, String> videos, Map<Long, String> categories, Map<Long, String> profiles) {
+                          Double rating, Boolean hasComments, Map<Long, URL> images,
+                          Map<Long, URL> videos, Map<Long, String> categories, Map<Long, String> profiles) {
         this.id = id;
         this.latitude = latitude;
         this.longitude = longitude;
@@ -80,19 +81,19 @@ public class POIResponseDTO {
         this.hasComments = hasComments;
     }
 
-    public Map<Long, String> getImages() {
+    public Map<Long, URL> getImages() {
         return images;
     }
 
-    public void setImages(Map<Long, String> images) {
+    public void setImages(Map<Long, URL> images) {
         this.images = images;
     }
 
-    public Map<Long, String> getVideos() {
+    public Map<Long, URL> getVideos() {
         return videos;
     }
 
-    public void setVideos(Map<Long, String> videos) {
+    public void setVideos(Map<Long, URL> videos) {
         this.videos = videos;
     }
 

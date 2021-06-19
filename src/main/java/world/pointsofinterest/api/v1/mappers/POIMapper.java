@@ -2,13 +2,13 @@ package world.pointsofinterest.api.v1.mappers;
 
 import org.springframework.stereotype.Component;
 import world.pointsofinterest.api.v1.model.*;
-import world.pointsofinterest.model.Category;
-import world.pointsofinterest.model.POI;
-import world.pointsofinterest.model.Profile;
+import world.pointsofinterest.model.*;
 
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component
 public class POIMapper {
@@ -17,17 +17,17 @@ public class POIMapper {
 
         Boolean hasComment = !POI.getComments().isEmpty();
 
-        Map<Long, String> images = new HashMap<>();
-        POI.getImageSet().stream().map(image -> { images.put(image.getId(), null); return null;});
+        Map<Long, URL> images =
+                POI.getImageSet().stream().collect(Collectors.toMap(Image::getId, Image::getUrl));
 
-        Map<Long, String> videos = new HashMap<>();
-        POI.getVideoSet().stream().map(video -> { videos.put(video.getId(), null); return null;});
+        Map<Long, URL> videos =
+                POI.getVideoSet().stream().collect(Collectors.toMap(Video::getId, Video::getUrl));
 
-        Map<Long, String> categories = new HashMap<>();
-        POI.getCategories().stream().map(category -> { categories.put(category.getId(), null); return null;});
+        Map<Long, String> categories =
+                POI.getCategories().stream().collect(Collectors.toMap(Category::getId, Category::getName));
 
-        Map<Long, String> profiles = new HashMap<>();
-        POI.getProfiles().stream().map(profile -> { profiles.put(profile.getId(), null); return null;});
+        Map<Long, String> profiles =
+                POI.getProfiles().stream().collect(Collectors.toMap(Profile::getId, Profile::getUsername));
 
         return new POIResponseDTO(
                 POI.getId(), POI.getLatitude(), POI.getLongitude(), POI.getDescription(),

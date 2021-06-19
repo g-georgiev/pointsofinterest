@@ -4,7 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import world.pointsofinterest.api.v1.model.POIRequestDTO;
 import world.pointsofinterest.api.v1.model.POIResponseDTO;
-import world.pointsofinterest.services.POIService;
+import world.pointsofinterest.services.interfaces.POIService;
 
 import java.util.List;
 
@@ -45,7 +45,6 @@ public class POIController {
     public POIResponseDTO updatePOI(@PathVariable Long id, @RequestBody POIRequestDTO poiDTO){
         return poiService.update(id, poiDTO);
     }
-
 
     @DeleteMapping({"/{id}"})
     @ResponseStatus(HttpStatus.OK)

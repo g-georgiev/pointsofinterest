@@ -1,16 +1,17 @@
 package world.pointsofinterest.api.v1.model;
 
+import java.util.Map;
+
 public class CategoryDTO {
     private Long id;
     private String name;
     private String description;
-    private String categoryURL;
+    private Map<String, String> links;
 
-    public CategoryDTO(Long id, String name, String description, String categoryURL) {
+    public CategoryDTO(Long id, String name, String description) {
         this.id = id;
         this.name = name;
         this.description = description;
-        this.categoryURL = categoryURL;
     }
 
     public Long getId() {
@@ -37,11 +38,11 @@ public class CategoryDTO {
         this.description = description;
     }
 
-    public String getCategoryURL() {
-        return categoryURL;
+    public Map<String, String> getLinks() {
+        return links;
     }
 
-    public void setCategoryURL(String categoryURL) {
-        this.categoryURL = categoryURL;
+    public void setLinks(Map<String, String> links) {
+        this.links = links;
     }
 }

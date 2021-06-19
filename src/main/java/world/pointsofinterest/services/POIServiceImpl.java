@@ -11,12 +11,13 @@ import world.pointsofinterest.model.Category;
 import world.pointsofinterest.model.POI;
 import world.pointsofinterest.model.Profile;
 import world.pointsofinterest.repositories.*;
+import world.pointsofinterest.services.interfaces.POIService;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class POIServiceImpl implements POIService{
+public class POIServiceImpl implements POIService {
 
     private final POIRepository poiRepository;
     private final CategoryRepository categoryRepository;
@@ -60,27 +61,41 @@ public class POIServiceImpl implements POIService{
                 .orElseThrow(ResourceNotFoundException::new);
     }
 
-    @Override
-    public POIResponseDTO save(POIRequestDTO poidto) {
-        Set<Category> categories = new HashSet<>(categoryRepository.findByIdIn(poidto.getCategories()));
-        Set<Profile> profiles = new HashSet<>(profileRepository.findByIdIn(poidto.getProfiles()));
-        POI poi = poiRepository.save(poiMapper.POIDTOToPOI(poidto, categories, profiles));
-        POIResponseDTO poiDTO = poiMapper.POIToPOIDTO(poi);
-        poiDTO.setLinks(initLinks(poi));
-        return poiDTO;
+    public List<POIResponseDTO> findAllByCategory(Long id){
+        Category category = categoryRepository.findById(id).orElseThrow(ResourceNotFoundException::new);
+        return category.getPOIs()
+                .stream()
+                .map(poi -> {
+                    POIResponseDTO poiDTO = poiMapper.POIToPOIDTO(poi);
+                    poiDTO.setLinks(initLinks(poi));
+                    return poiDTO;
+                })
+                .collect(Collectors.toList());
     }
 
     @Override
-    public POIResponseDTO update(Long id, POIRequestDTO poidto) {
+    public POIResponseDTO save(POIRequestDTO poiRequestDTO) {
+        Set<Category> categories = new HashSet<>(categoryRepository.findByIdIn(poiRequestDTO.getCategories()));
+        Set<Profile> profiles = new HashSet<>(profileRepository.findByIdIn(poiRequestDTO.getProfiles()));
+
+        POI poi = poiRepository.save(poiMapper.POIDTOToPOI(poiRequestDTO, categories, profiles));
+        POIResponseDTO newPoiDTO = poiMapper.POIToPOIDTO(poi);
+        newPoiDTO.setLinks(initLinks(poi));
+
+        return newPoiDTO;
+    }
+
+    @Override
+    public POIResponseDTO update(Long id, POIRequestDTO poiRequestDTO) {
 
         return poiRepository.findById(id).map(poi -> {
 
-            if(poidto.getDescription() != null){
-                poi.setDescription(poidto.getDescription());
+            if(poiRequestDTO.getDescription() != null){
+                poi.setDescription(poiRequestDTO.getDescription());
             }
 
-            if(poidto.getRating() != null){
-                poi.addRating(poidto.getRating());
+            if(poiRequestDTO.getRating() != null){
+                poi.addRating(poiRequestDTO.getRating());
             }
 
             POIResponseDTO returnDto = poiMapper.POIToPOIDTO(poiRepository.save(poi));
@@ -93,6 +108,7 @@ public class POIServiceImpl implements POIService{
 
     @Override
     public void deleteById(Long id) {
+        poiRepository.findById(id).orElseThrow(ResourceNotFoundException::new);
         poiRepository.deleteById(id);
     }
 
@@ -100,9 +116,9 @@ public class POIServiceImpl implements POIService{
         Map<String, String> links = new HashMap<>();
         links.put("showProfiles", UserProfileController.BASE_URL);
         links.put("showCategories", CategoryController.BASE_URL);
-        links.put("showComments", POIController.BASE_URL + poi.getId() + POIController.POI_COMMENT_PATH);
-        links.put("showImages", POIController.BASE_URL + poi.getId() + POIController.POI_IMAGE_PATH);
-        links.put("showVideos", POIController.BASE_URL + poi.getId() + POIController.POI_VIDEO_PATH);
+        links.put("showComments", POIController.BASE_URL + "/" + poi.getId() + POIController.POI_COMMENT_PATH);
+        links.put("showImages", POIController.BASE_URL + "/" + poi.getId() + POIController.POI_IMAGE_PATH);
+        links.put("showVideos", POIController.BASE_URL + "/" + poi.getId() + POIController.POI_VIDEO_PATH);
         return links;
     }
 }

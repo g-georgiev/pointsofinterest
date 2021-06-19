@@ -1,4 +1,4 @@
-package world.pointsofinterest.services;
+package world.pointsofinterest.services.interfaces;
 
 import world.pointsofinterest.api.v1.model.POIRequestDTO;
 import world.pointsofinterest.api.v1.model.POIResponseDTO;

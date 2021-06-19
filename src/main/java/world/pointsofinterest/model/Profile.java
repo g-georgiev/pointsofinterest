@@ -83,4 +83,8 @@ public class Profile extends Post {
     public void addComment(Comment comment) {
         receivedComments.add(comment);
     }
+
+    public String getUsername() {
+        return user.getUsername();
+    }
 }

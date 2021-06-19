@@ -1,4 +1,4 @@
-package world.pointsofinterest.services;
+package world.pointsofinterest.services.interfaces;
 
 import java.util.List;
 
