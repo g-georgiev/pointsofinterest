@@ -2,7 +2,8 @@ package world.pointsofinterest.controllers.v1;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import world.pointsofinterest.api.v1.model.POIDTO;
+import world.pointsofinterest.api.v1.model.POIRequestDTO;
+import world.pointsofinterest.api.v1.model.POIResponseDTO;
 import world.pointsofinterest.services.POIService;
 
 import java.util.List;
@@ -23,25 +24,25 @@ public class POIController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<POIDTO> getListOfPOIs(){
+    public List<POIResponseDTO> getListOfPOIs(){
         return poiService.findAll();
     }
 
     @GetMapping({"/{id}"})
     @ResponseStatus(HttpStatus.OK)
-    public POIDTO getPOIById(@PathVariable Long id){
+    public POIResponseDTO getPOIById(@PathVariable Long id){
         return poiService.findById(id);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public POIDTO createNewPOI(@RequestBody POIDTO poiDTO){
+    public POIResponseDTO createNewPOI(@RequestBody POIRequestDTO poiDTO){
         return poiService.save(poiDTO);
     }
 
     @PutMapping({"/{id}"})
     @ResponseStatus(HttpStatus.OK)
-    public POIDTO updatePOI(@PathVariable Long id, @RequestBody POIDTO poiDTO){
+    public POIResponseDTO updatePOI(@PathVariable Long id, @RequestBody POIRequestDTO poiDTO){
         return poiService.update(id, poiDTO);
     }
 

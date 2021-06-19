@@ -19,6 +19,10 @@ public class User extends BaseEntity {
 
     //TODO: PASSKEY?
 
+
+    public User() {
+    }
+
     public User(Long id, String username, Profile profile) {
         super(id);
         this.username = username;

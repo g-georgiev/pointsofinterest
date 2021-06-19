@@ -17,7 +17,7 @@ public class Profile extends Post {
 
     @JoinColumn(name = "user_id", nullable = false)
     @OneToOne(cascade = CascadeType.ALL)
-    private final User user;
+    private User user;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "poster")
     private List<Comment> postedComments = new ArrayList<>();
@@ -27,6 +27,9 @@ public class Profile extends Post {
 
     @ManyToMany(mappedBy = "profiles")
     private Set<POI> postedPOIs = new HashSet<>();
+
+    public Profile() {
+    }
 
     public Profile(Long id, String description, Double rating, User user) {
         super(id, description, rating);
@@ -59,6 +62,18 @@ public class Profile extends Post {
 
     public void setPostedComments(List<Comment> postedComments) {
         this.postedComments = postedComments;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public void setReceivedComments(List<Comment> receivedComments) {
+        this.receivedComments = receivedComments;
+    }
+
+    public void setPostedPOIs(Set<POI> postedPOIs) {
+        this.postedPOIs = postedPOIs;
     }
 
     public void addPOI(POI POI) {

@@ -17,6 +17,9 @@ public class Multimedia extends Post {
     @Lob
     private Byte[] bin;
 
+    public Multimedia() {
+    }
+
     public Multimedia(Long id, String description, Double rating, URL url, Byte[] bin) {
         super(id, description, rating);
         this.url = url;

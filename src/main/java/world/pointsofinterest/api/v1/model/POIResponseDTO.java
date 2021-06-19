@@ -2,7 +2,7 @@ package world.pointsofinterest.api.v1.model;
 
 import java.util.Map;
 
-public class POIDTO {
+public class POIResponseDTO {
     private Long id;
     private Double latitude;
     private Double longitude;
@@ -17,9 +17,9 @@ public class POIDTO {
     private Map<Long, String> profiles;
     private Map<String, String> links;
 
-    public POIDTO(Long id, Double latitude, Double longitude, String description,
-                  Double rating, Boolean hasComments, Map<Long, String> images,
-                  Map<Long, String> videos, Map<Long, String> categories, Map<Long, String> profiles) {
+    public POIResponseDTO(Long id, Double latitude, Double longitude, String description,
+                          Double rating, Boolean hasComments, Map<Long, String> images,
+                          Map<Long, String> videos, Map<Long, String> categories, Map<Long, String> profiles) {
         this.id = id;
         this.latitude = latitude;
         this.longitude = longitude;

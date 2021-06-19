@@ -4,6 +4,7 @@ import world.pointsofinterest.model.superclasses.Multimedia;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import java.net.URL;
 
@@ -12,22 +13,45 @@ import java.net.URL;
 public class Image extends Multimedia {
 
     @ManyToOne
-    private final POI poi;
+    private POI poi;
 
     @ManyToOne
-    private final Profile profile;
+    private Profile profile;
 
-    public Image(Long id, String description, Double rating, URL url, Byte[] bin, POI poi, Profile profile) {
+    @OneToOne(mappedBy = "thumbnail")
+    private Video video;
+
+    public Image() {
+    }
+
+    public Image(Long id, String description, Double rating, URL url, Byte[] bin, POI poi, Profile profile, Video video) {
         super(id, description, rating, url, bin);
         this.poi = poi;
         this.profile = profile;
+        this.video = video;
     }
 
     public POI getPoi() {
         return poi;
     }
 
+    public void setPoi(POI poi) {
+        this.poi = poi;
+    }
+
     public Profile getProfile() {
         return profile;
+    }
+
+    public void setProfile(Profile profile) {
+        this.profile = profile;
+    }
+
+    public Video getVideo() {
+        return video;
+    }
+
+    public void setVideo(Video video) {
+        this.video = video;
     }
 }

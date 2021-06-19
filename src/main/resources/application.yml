@@ -2,8 +2,8 @@ spring:
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:54320/poi
-    username: poi_user
-    password: poiPASS
+    username: poi_dev
+    password: dev_pass
   jpa:
     hibernate:
       ddl-auto: validate
@@ -18,3 +18,8 @@ spring:
 #            scripts:
 #              action: create
 #              create-target: 1.create_tables.sql
+
+world:
+  poi:
+    security:
+      enable: false

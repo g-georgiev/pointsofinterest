@@ -22,6 +22,9 @@ public class Category extends BaseEntity {
     @ManyToMany(mappedBy = "categories")
     private Set<POI> POIs = new HashSet<>();
 
+    public Category() {
+    }
+
     public Category(Long id, String name, String description) {
         super(id);
         this.name = name;

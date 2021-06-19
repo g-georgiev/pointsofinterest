@@ -2,7 +2,8 @@ package world.pointsofinterest.services;
 
 import org.springframework.stereotype.Service;
 import world.pointsofinterest.api.v1.mappers.POIMapper;
-import world.pointsofinterest.api.v1.model.POIDTO;
+import world.pointsofinterest.api.v1.model.POIRequestDTO;
+import world.pointsofinterest.api.v1.model.POIResponseDTO;
 import world.pointsofinterest.controllers.v1.CategoryController;
 import world.pointsofinterest.controllers.v1.POIController;
 import world.pointsofinterest.controllers.v1.UserProfileController;
@@ -37,11 +38,11 @@ public class POIServiceImpl implements POIService{
     }
 
     @Override
-    public List<POIDTO> findAll() {
+    public List<POIResponseDTO> findAll() {
         return poiRepository.findAll()
                 .stream()
                 .map(poi -> {
-                    POIDTO poiDTO = poiMapper.POIToPOIDTO(poi);
+                    POIResponseDTO poiDTO = poiMapper.POIToPOIDTO(poi);
                     poiDTO.setLinks(initLinks(poi));
                     return poiDTO;
                 })
@@ -49,10 +50,10 @@ public class POIServiceImpl implements POIService{
     }
 
     @Override
-    public POIDTO findById(Long aLong) {
+    public POIResponseDTO findById(Long aLong) {
         return poiRepository.findById(aLong)
                 .map(poi -> {
-                    POIDTO poiDTO = poiMapper.POIToPOIDTO(poi);
+                    POIResponseDTO poiDTO = poiMapper.POIToPOIDTO(poi);
                     poiDTO.setLinks(initLinks(poi));
                     return poiDTO;
                 })
@@ -60,19 +61,17 @@ public class POIServiceImpl implements POIService{
     }
 
     @Override
-    public POIDTO save(POIDTO poidto) {
-        Set<Category> categories = new HashSet<>(categoryRepository.findByIdIn(
-                (Long[]) poidto.getCategories().keySet().toArray()));
-        Set<Profile> profiles = new HashSet<>(profileRepository.findByIdIn(
-                (Long[]) poidto.getProfiles().keySet().toArray()));
+    public POIResponseDTO save(POIRequestDTO poidto) {
+        Set<Category> categories = new HashSet<>(categoryRepository.findByIdIn(poidto.getCategories()));
+        Set<Profile> profiles = new HashSet<>(profileRepository.findByIdIn(poidto.getProfiles()));
         POI poi = poiRepository.save(poiMapper.POIDTOToPOI(poidto, categories, profiles));
-        POIDTO poiDTO = poiMapper.POIToPOIDTO(poi);
+        POIResponseDTO poiDTO = poiMapper.POIToPOIDTO(poi);
         poiDTO.setLinks(initLinks(poi));
         return poiDTO;
     }
 
     @Override
-    public POIDTO update(Long id, POIDTO poidto) {
+    public POIResponseDTO update(Long id, POIRequestDTO poidto) {
 
         return poiRepository.findById(id).map(poi -> {
 
@@ -84,7 +83,7 @@ public class POIServiceImpl implements POIService{
                 poi.addRating(poidto.getRating());
             }
 
-            POIDTO returnDto = poiMapper.POIToPOIDTO(poiRepository.save(poi));
+            POIResponseDTO returnDto = poiMapper.POIToPOIDTO(poiRepository.save(poi));
             returnDto.setLinks(initLinks(poi));
 
             return returnDto;

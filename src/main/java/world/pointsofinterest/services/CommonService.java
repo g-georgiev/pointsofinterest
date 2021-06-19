@@ -3,15 +3,15 @@ package world.pointsofinterest.services;
 import java.util.List;
 
 
-public interface CommonService<T, ID> {
+public interface CommonService<REQ, RES, ID> {
 
-    List<T> findAll();
+    List<RES> findAll();
 
-    T findById(ID id);
+    RES findById(ID id);
 
-    T save(T object);
+    RES save(REQ object);
 
-    T update(ID id, T object);
+    RES update(ID id, REQ object);
 
     void deleteById(ID id);
 }

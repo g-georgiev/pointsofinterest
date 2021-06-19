@@ -13,10 +13,10 @@ import java.util.Set;
 public class POI extends Post {
 
     @Column(name = "latitude", nullable = false)
-    private final Double latitude;
+    private Double latitude;
 
     @Column(name = "longitude", nullable = false)
-    private final Double longitude;
+    private Double longitude;
 
     @OneToMany(mappedBy = "poi")
     private Set<Video> videoSet = new HashSet<>();
@@ -37,6 +37,9 @@ public class POI extends Post {
             inverseJoinColumns = @JoinColumn(name = "profile_id"))
     private Set<Profile> profiles;
 
+    public POI() {
+    }
+
     public POI(Long id, String description, Double rating, Double latitude, Double longitude,
                Set<Category> categories, Set<Profile> profiles) {
         super(id, description, rating);
@@ -50,28 +53,56 @@ public class POI extends Post {
         return latitude;
     }
 
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
     public Double getLongitude() {
         return longitude;
     }
 
-    public Set<Category> getCategories() {
-        return categories;
-    }
-
-    public Set<Image> getImageSet() {
-        return imageSet;
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
     }
 
     public Set<Video> getVideoSet() {
         return videoSet;
     }
 
+    public void setVideoSet(Set<Video> videoSet) {
+        this.videoSet = videoSet;
+    }
+
+    public Set<Image> getImageSet() {
+        return imageSet;
+    }
+
+    public void setImageSet(Set<Image> imageSet) {
+        this.imageSet = imageSet;
+    }
+
     public List<Comment> getComments() {
         return comments;
     }
 
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
+    }
+
+    public Set<Category> getCategories() {
+        return categories;
+    }
+
+    public void setCategories(Set<Category> categories) {
+        this.categories = categories;
+    }
+
     public Set<Profile> getProfiles() {
         return profiles;
+    }
+
+    public void setProfiles(Set<Profile> profiles) {
+        this.profiles = profiles;
     }
 
     public void addImage(Image Image) {

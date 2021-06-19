@@ -13,7 +13,7 @@ import java.util.Set;
 @Component
 public class POIMapper {
 
-    public POIDTO POIToPOIDTO(POI POI){
+    public POIResponseDTO POIToPOIDTO(POI POI){
 
         Boolean hasComment = !POI.getComments().isEmpty();
 
@@ -29,19 +29,19 @@ public class POIMapper {
         Map<Long, String> profiles = new HashMap<>();
         POI.getProfiles().stream().map(profile -> { profiles.put(profile.getId(), null); return null;});
 
-        return new POIDTO(
+        return new POIResponseDTO(
                 POI.getId(), POI.getLatitude(), POI.getLongitude(), POI.getDescription(),
                 POI.getRating(), hasComment, images, videos, categories, profiles
         );
     }
 
-    public POI POIDTOToPOI(POIDTO POIDTO, Set<Category> categories, Set<Profile> profiles) {
+    public POI POIDTOToPOI(POIRequestDTO POIRequestDTO, Set<Category> categories, Set<Profile> profiles) {
         return new POI(
                 null,
-                POIDTO.getDescription(),
-                POIDTO.getRating(),
-                POIDTO.getLatitude(),
-                POIDTO.getLongitude(),
+                POIRequestDTO.getDescription(),
+                POIRequestDTO.getRating(),
+                POIRequestDTO.getLatitude(),
+                POIRequestDTO.getLongitude(),
                 categories,
                 profiles
         );
