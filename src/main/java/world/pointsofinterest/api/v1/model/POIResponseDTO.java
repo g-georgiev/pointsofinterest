@@ -1,7 +1,6 @@
 package world.pointsofinterest.api.v1.model;
 
-import java.net.URL;
-import java.util.Map;
+import java.util.Set;
 
 public class POIResponseDTO {
     private Long id;
@@ -12,15 +11,15 @@ public class POIResponseDTO {
     private Boolean hasComments;
     //TODO: thumbnails
     //TODO: firstImage
-    private Map<Long, URL> images;
-    private Map<Long, URL> videos;
-    private Map<Long, String> categories;
-    private Map<Long, String> profiles;
-    private Map<String, String> links;
+    private Set<ImageDTO> images;
+    private Set<VideoDTO> videos;
+    private Set<CategoryDTO> categories;
+    private Set<ProfileDTO> profiles;
+    private Set<CommentDTO> comments;
 
-    public POIResponseDTO(Long id, Double latitude, Double longitude, String description,
-                          Double rating, Boolean hasComments, Map<Long, URL> images,
-                          Map<Long, URL> videos, Map<Long, String> categories, Map<Long, String> profiles) {
+    public POIResponseDTO(Long id, Double latitude, Double longitude, String description, Double rating,
+                          Boolean hasComments, Set<ImageDTO> images, Set<VideoDTO> videos,
+                          Set<CategoryDTO> categories, Set<ProfileDTO> profiles, Set<CommentDTO> comments) {
         this.id = id;
         this.latitude = latitude;
         this.longitude = longitude;
@@ -31,6 +30,7 @@ public class POIResponseDTO {
         this.videos = videos;
         this.categories = categories;
         this.profiles = profiles;
+        this.comments = comments;
     }
 
     public Long getId() {
@@ -81,43 +81,43 @@ public class POIResponseDTO {
         this.hasComments = hasComments;
     }
 
-    public Map<Long, URL> getImages() {
+    public Set<ImageDTO> getImages() {
         return images;
     }
 
-    public void setImages(Map<Long, URL> images) {
+    public void setImages(Set<ImageDTO> images) {
         this.images = images;
     }
 
-    public Map<Long, URL> getVideos() {
+    public Set<VideoDTO> getVideos() {
         return videos;
     }
 
-    public void setVideos(Map<Long, URL> videos) {
+    public void setVideos(Set<VideoDTO> videos) {
         this.videos = videos;
     }
 
-    public Map<Long, String> getCategories() {
+    public Set<CategoryDTO> getCategories() {
         return categories;
     }
 
-    public void setCategories(Map<Long, String> categories) {
+    public void setCategories(Set<CategoryDTO> categories) {
         this.categories = categories;
     }
 
-    public Map<Long, String> getProfiles() {
+    public Set<ProfileDTO> getProfiles() {
         return profiles;
     }
 
-    public void setProfiles(Map<Long, String> profiles) {
+    public void setProfiles(Set<ProfileDTO> profiles) {
         this.profiles = profiles;
     }
 
-    public Map<String, String> getLinks() {
-        return links;
+    public Set<CommentDTO> getComments() {
+        return comments;
     }
 
-    public void setLinks(Map<String, String> links) {
-        this.links = links;
+    public void setComments(Set<CommentDTO> comments) {
+        this.comments = comments;
     }
 }

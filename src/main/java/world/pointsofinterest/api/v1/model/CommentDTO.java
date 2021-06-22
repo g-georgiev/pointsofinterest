@@ -4,18 +4,17 @@ public class CommentDTO {
     private Long id;
     private String comment;
     private String posterName;
-    private String posterURL;
-    private String POIURL;
-    private String profileURL;
+    private Long posterId;
+    private Long POIId;
+    private Long profileId;
 
-    public CommentDTO(Long id, String comment, String posterName, String posterURL,
-                      String POIURL, String profileURL) {
+    public CommentDTO(Long id, String comment, String posterName, Long posterId, Long poiId, Long profileId) {
         this.id = id;
         this.comment = comment;
         this.posterName = posterName;
-        this.posterURL = posterURL;
-        this.POIURL = POIURL;
-        this.profileURL = profileURL;
+        this.posterId = posterId;
+        POIId = poiId;
+        this.profileId = profileId;
     }
 
     public Long getId() {
@@ -42,27 +41,27 @@ public class CommentDTO {
         this.posterName = posterName;
     }
 
-    public String getPosterURL() {
-        return posterURL;
+    public Long getPosterId() {
+        return posterId;
     }
 
-    public void setPosterURL(String posterURL) {
-        this.posterURL = posterURL;
+    public void setPosterId(Long posterId) {
+        this.posterId = posterId;
     }
 
-    public String getPOIURL() {
-        return POIURL;
+    public Long getPOIId() {
+        return POIId;
     }
 
-    public void setPOIURL(String POIURL) {
-        this.POIURL = POIURL;
+    public void setPOIId(Long POIId) {
+        this.POIId = POIId;
     }
 
-    public String getProfileURL() {
-        return profileURL;
+    public Long getProfileId() {
+        return profileId;
     }
 
-    public void setProfileURL(String profileURL) {
-        this.profileURL = profileURL;
+    public void setProfileId(Long profileId) {
+        this.profileId = profileId;
     }
 }

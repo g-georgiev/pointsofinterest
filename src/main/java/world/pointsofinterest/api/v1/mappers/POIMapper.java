@@ -2,37 +2,53 @@ package world.pointsofinterest.api.v1.mappers;
 
 import org.springframework.stereotype.Component;
 import world.pointsofinterest.api.v1.model.*;
-import world.pointsofinterest.model.*;
+import world.pointsofinterest.model.Category;
+import world.pointsofinterest.model.POI;
+import world.pointsofinterest.model.Profile;
 
-import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
 public class POIMapper {
 
+    private final CommentMapper commentMapper;
+    private final ProfileMapper profileMapper;
+    private final CategoryMapper categoryMapper;
+
+    public POIMapper(CommentMapper commentMapper, ProfileMapper profileMapper, CategoryMapper categoryMapper) {
+        this.commentMapper = commentMapper;
+        this.profileMapper = profileMapper;
+        this.categoryMapper = categoryMapper;
+    }
+
     public POIResponseDTO POIToPOIDTO(POI POI){
 
         Boolean hasComment = !POI.getComments().isEmpty();
 
-        Map<Long, URL> images =
-                POI.getImageSet().stream().collect(Collectors.toMap(Image::getId, Image::getUrl));
+        Set<ImageDTO> images = POI.getImageSet().stream()
+                .map(image -> new ImageDTO(image.getId(), image.getDescription(), image.getRating()))
+                .collect(Collectors.toSet());
 
-        Map<Long, URL> videos =
-                POI.getVideoSet().stream().collect(Collectors.toMap(Video::getId, Video::getUrl));
+        Set<VideoDTO> videos = POI.getVideoSet().stream()
+                .map(video -> new VideoDTO(video.getId(), video.getDescription(), video.getRating()))
+                .collect(Collectors.toSet());
 
-        Map<Long, String> categories =
-                POI.getCategories().stream().collect(Collectors.toMap(Category::getId, Category::getName));
+        Set<CategoryDTO> categories = POI.getCategories().stream()
+                .map(categoryMapper::categoryToCategoryDTO)
+                .collect(Collectors.toSet());
 
-        Map<Long, String> profiles =
-                POI.getProfiles().stream().collect(Collectors.toMap(Profile::getId, Profile::getUsername));
+        Set<ProfileDTO> profiles = POI.getProfiles().stream()
+                .map(profileMapper::profileToProfileDTO)
+                .collect(Collectors.toSet());
+
+        Set<CommentDTO> comments = POI.getComments().stream()
+                .map(commentMapper::commentToCommentDTO)
+                .collect(Collectors.toSet());
 
         return new POIResponseDTO(
                 POI.getId(), POI.getLatitude(), POI.getLongitude(), POI.getDescription(),
-                POI.getRating(), hasComment, images, videos, categories, profiles
-        );
+                POI.getRating(), hasComment, images, videos, categories, profiles, comments);
     }
 
     public POI POIDTOToPOI(POIRequestDTO POIRequestDTO, Set<Category> categories, Set<Profile> profiles) {

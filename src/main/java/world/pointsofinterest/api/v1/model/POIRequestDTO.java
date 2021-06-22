@@ -1,7 +1,6 @@
 package world.pointsofinterest.api.v1.model;
 
 import java.util.List;
-import java.util.Map;
 
 public class POIRequestDTO {
     private Long id;

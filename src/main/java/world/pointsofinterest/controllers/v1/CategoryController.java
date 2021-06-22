@@ -6,6 +6,7 @@ import world.pointsofinterest.api.v1.model.CategoryDTO;
 import world.pointsofinterest.api.v1.model.POIResponseDTO;
 import world.pointsofinterest.services.POIServiceImpl;
 import world.pointsofinterest.services.interfaces.CategoryService;
+import world.pointsofinterest.services.interfaces.POIService;
 
 import java.util.List;
 
@@ -16,7 +17,7 @@ public class CategoryController {
     public static final String POI_PATH = "/poi";
 
     private final CategoryService categoryService;
-    private final POIServiceImpl poiService;
+    private final POIService poiService;
 
     public CategoryController(CategoryService categoryService, POIServiceImpl poiService) {
         this.categoryService = categoryService;

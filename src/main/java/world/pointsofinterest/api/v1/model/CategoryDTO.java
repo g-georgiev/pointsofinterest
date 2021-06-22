@@ -6,7 +6,6 @@ public class CategoryDTO {
     private Long id;
     private String name;
     private String description;
-    private Map<String, String> links;
 
     public CategoryDTO(Long id, String name, String description) {
         this.id = id;
@@ -36,13 +35,5 @@ public class CategoryDTO {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public Map<String, String> getLinks() {
-        return links;
-    }
-
-    public void setLinks(Map<String, String> links) {
-        this.links = links;
     }
 }

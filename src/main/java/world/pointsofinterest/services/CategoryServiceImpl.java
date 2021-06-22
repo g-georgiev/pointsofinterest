@@ -4,15 +4,10 @@ import org.springframework.stereotype.Service;
 import world.pointsofinterest.api.v1.mappers.CategoryMapper;
 import world.pointsofinterest.api.v1.mappers.POIMapper;
 import world.pointsofinterest.api.v1.model.CategoryDTO;
-import world.pointsofinterest.api.v1.model.POIResponseDTO;
-import world.pointsofinterest.controllers.v1.CategoryController;
-import world.pointsofinterest.model.Category;
 import world.pointsofinterest.repositories.CategoryRepository;
 import world.pointsofinterest.services.interfaces.CategoryService;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,50 +24,34 @@ public class CategoryServiceImpl implements CategoryService {
     public List<CategoryDTO> findAll() {
         return categoryRepository.findAll()
                 .stream()
-                .map(category -> {
-                    CategoryDTO categoryDTO = categoryMapper.categoryToCategoryDTO(category);
-                    categoryDTO.setLinks(initLinks(category));
-                    return categoryDTO;
-                })
+                .map(categoryMapper::categoryToCategoryDTO)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public CategoryDTO findById(Long aLong) {
-        return categoryRepository.findById(aLong)
-                .map(category -> {
-                    CategoryDTO categoryDTO = categoryMapper.categoryToCategoryDTO(category);
-                    categoryDTO.setLinks(initLinks(category));
-                    return categoryDTO;
-                })
+    public CategoryDTO findById(Long id) {
+        return categoryRepository.findById(id)
+                .map(categoryMapper::categoryToCategoryDTO)
                 .orElseThrow(ResourceNotFoundException::new);
     }
 
     @Override
     public CategoryDTO save(CategoryDTO categoryDTO) {
-        Category category = categoryRepository.save(categoryMapper.categoryDTOToCategory(categoryDTO));
-        CategoryDTO newCategoryDTO = categoryMapper.categoryToCategoryDTO(category);
-        newCategoryDTO.setLinks(initLinks(category));
-        return newCategoryDTO;
+        return categoryMapper.categoryToCategoryDTO(
+                categoryRepository.save(categoryMapper.categoryDTOToCategory(categoryDTO)));
     }
 
     @Override
     public CategoryDTO update(Long id, CategoryDTO categoryDTO) {
         return categoryRepository.findById(id).map(category -> {
-
             if(categoryDTO.getDescription() != null){
                 category.setDescription(categoryDTO.getDescription());
             }
-
             if(categoryDTO.getName() != null){
                 category.setName(categoryDTO.getName());
             }
 
-            CategoryDTO returnDto = categoryMapper.categoryToCategoryDTO(categoryRepository.save(category));
-            returnDto.setLinks(initLinks(category));
-
-            return returnDto;
-
+            return categoryMapper.categoryToCategoryDTO(categoryRepository.save(category));
         }).orElseThrow(ResourceNotFoundException::new);
     }
 
@@ -81,11 +60,5 @@ public class CategoryServiceImpl implements CategoryService {
         categoryRepository.findById(id).orElseThrow(ResourceNotFoundException::new);
         categoryRepository.deleteById(id);
 
-    }
-
-    private Map<String, String> initLinks(Category category) {
-        Map<String, String> links = new HashMap<>();
-        links.put("showPOI", CategoryController.BASE_URL + "/" + category.getId() + CategoryController.POI_PATH);
-        return links;
     }
 }
