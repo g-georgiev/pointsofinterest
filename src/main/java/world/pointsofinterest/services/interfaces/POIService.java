@@ -12,6 +12,8 @@ public interface POIService extends CommonService<POIRequestDTO, POIResponseDTO,
 
     List<POIResponseDTO> findAllByProfile(Long id);
 
+    List<POIResponseDTO> findAllByRange(Double currentLat, Double currentLon, Double rangeInKm);
+
     List<CommentDTO> findAllComments(Long id);
 
     CommentDTO addComment(Long id, CommentDTO commentDTO);

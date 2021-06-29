@@ -25,8 +25,17 @@ public class POIController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<POIResponseDTO> getListOfPOIs(){
-        return poiService.findAll();
+    public List<POIResponseDTO> getListOfPOIs(@RequestParam(required = false, name = "lat") Double latitude,
+                                              @RequestParam(required = false, name = "lon") Double longitude,
+                                              @RequestParam(required = false, name = "r") Double rangeInKm){
+        List<POIResponseDTO> foundPOI;
+        if(latitude != null && longitude != null && rangeInKm != null){
+            foundPOI = poiService.findAllByRange(latitude, longitude, rangeInKm);
+        } else {
+            foundPOI = poiService.findAll();
+        }
+
+        return foundPOI;
     }
 
     @GetMapping({"/{id}"})

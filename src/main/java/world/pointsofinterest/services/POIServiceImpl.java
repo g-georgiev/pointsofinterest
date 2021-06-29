@@ -1,5 +1,8 @@
 package world.pointsofinterest.services;
 
+import com.javadocmd.simplelatlng.LatLng;
+import com.javadocmd.simplelatlng.LatLngTool;
+import com.javadocmd.simplelatlng.util.LengthUnit;
 import org.springframework.stereotype.Service;
 import world.pointsofinterest.api.v1.mappers.CommentMapper;
 import world.pointsofinterest.api.v1.mappers.POIMapper;
@@ -14,6 +17,7 @@ import world.pointsofinterest.repositories.*;
 import world.pointsofinterest.services.interfaces.CommentService;
 import world.pointsofinterest.services.interfaces.POIService;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -77,6 +81,33 @@ public class POIServiceImpl implements POIService {
                 .stream()
                 .map(poiMapper::POIToPOIDTO)
                 .collect(Collectors.toList());
+    }
+
+    public List<POIResponseDTO> findAllByRange(Double currentLat, Double currentLon, Double rangeInKm){
+        LatLng currentPoint = new LatLng(currentLat, currentLon);
+        List<POIResponseDTO> foundPOIs = new ArrayList<>();
+
+        //Initial filtration
+        //Approximate km to degrees conversion
+        Double rangeInDegrees = rangeInKm / 40000 * 360;
+        //Finding POIs in an approximate rectangle around the current point
+        List<POI> POIs = poiRepository.findByLatitudeBetweenAndLongitudeBetween(
+                currentLat - rangeInDegrees,
+                currentLat + rangeInDegrees,
+                currentLon - rangeInDegrees,
+                currentLon + rangeInDegrees
+        );
+
+        //Fine filtration using Geo distance calculation lib
+        for(POI poi : POIs){
+            if(rangeInKm >= LatLngTool.distance(currentPoint,
+                    new LatLng(poi.getLatitude(), poi.getLongitude()),
+                    LengthUnit.KILOMETER)){
+                foundPOIs.add(poiMapper.POIToPOIDTO(poi));
+            }
+        }
+
+        return foundPOIs;
     }
 
     @Override
