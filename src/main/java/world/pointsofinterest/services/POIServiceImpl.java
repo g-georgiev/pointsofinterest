@@ -75,7 +75,7 @@ public class POIServiceImpl implements POIService {
     }
 
     @Override
-    public List<POIResponseDTO> findAllByProfile(Long id) {
+    public List<POIResponseDTO> findAllPostedPOIsByProfile(Long id) {
         Profile profile = profileRepository.findById(id).orElseThrow(ResourceNotFoundException::new);
         return profile.getPostedPOIs()
                 .stream()

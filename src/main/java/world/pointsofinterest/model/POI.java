@@ -116,4 +116,17 @@ public class POI extends Post {
     public void addComment(Comment comment) {
         comments.add(comment);
     }
+
+    @Override
+    public String toString() {
+        return "POI{" +
+                "latitude=" + latitude +
+                ", longitude=" + longitude +
+                ", videoSet=" + videoSet +
+                ", imageSet=" + imageSet +
+                ", comments=" + comments +
+                ", categories=" + categories +
+                ", profiles=" + profiles +
+                '}';
+    }
 }

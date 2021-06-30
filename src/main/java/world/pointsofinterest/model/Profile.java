@@ -87,4 +87,12 @@ public class Profile extends Post {
     public String getUsername() {
         return user.getUsername();
     }
+
+    @Override
+    public String toString() {
+        return "Profile{" +
+                "banned=" + banned +
+                ", user=" + user +
+                '}';
+    }
 }

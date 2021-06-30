@@ -65,4 +65,14 @@ public class Comment extends BaseEntity {
     public void setProfile(Profile profile) {
         this.profile = profile;
     }
+
+    @Override
+    public String toString() {
+        return "Comment{" +
+                "comment='" + comment + '\'' +
+                ", poster=" + poster.getUser().getUsername() +
+                ", poi=" + poi.getId() +
+                ", profile=" + profile.getUser().getUsername() +
+                '}';
+    }
 }

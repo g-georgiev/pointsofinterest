@@ -10,7 +10,7 @@ public interface POIService extends CommonService<POIRequestDTO, POIResponseDTO,
 
     List<POIResponseDTO> findAllByCategory(Long id);
 
-    List<POIResponseDTO> findAllByProfile(Long id);
+    List<POIResponseDTO> findAllPostedPOIsByProfile(Long id);
 
     List<POIResponseDTO> findAllByRange(Double currentLat, Double currentLon, Double rangeInKm);
 

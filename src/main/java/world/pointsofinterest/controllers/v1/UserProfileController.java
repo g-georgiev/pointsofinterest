@@ -1,5 +1,7 @@
 package world.pointsofinterest.controllers.v1;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import world.pointsofinterest.api.v1.model.CommentDTO;
@@ -29,54 +31,81 @@ public class UserProfileController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Get a list of all user profiles")
     public List<ProfileDTO> getListOfProfiles(){
         return userProfileService.findAll();
     }
 
     @GetMapping({"/{id}"})
+    @Operation(summary = "Get a user profile by ID")
     @ResponseStatus(HttpStatus.OK)
-    public ProfileDTO getProfileById(@PathVariable Long id){
+    public ProfileDTO getProfileById(
+            @Parameter(description = "The id of the user profile to fetch", required = true)
+            @PathVariable Long id){
         return userProfileService.findById(id);
     }
 
     @GetMapping({"/{id}" + POI_PATH})
     @ResponseStatus(HttpStatus.OK)
-    public List<POIResponseDTO> getPOIByProfileId(@PathVariable Long id){
-        return poiService.findAllByProfile(id);
+    @Operation(summary = "Get a list of all the points of interest a user has posted")
+    public List<POIResponseDTO> getPostedPOIsByProfileId(
+            @Parameter(description = "The id of the user, whose posted points of interest to fetch", required = true)
+            @PathVariable Long id){
+        return poiService.findAllPostedPOIsByProfile(id);
     }
 
     @GetMapping({"/{id}" + POSTED_COMMENT_PATH})
     @ResponseStatus(HttpStatus.OK)
-    public List<CommentDTO> getPostedComments(@PathVariable Long id){
+    @Operation(summary = "Get a list of all the comments a user has posted")
+    public List<CommentDTO> getPostedComments(
+            @Parameter(description = "The id of the user, whose posted comments to fetch", required = true)
+            @PathVariable Long id){
         return userProfileService.findAllPostedComments(id);
     }
 
     @GetMapping({"/{id}" + RECEIVED_COMMENT_PATH})
     @ResponseStatus(HttpStatus.OK)
-    public List<CommentDTO> getReceivedComments(@PathVariable Long id){
+    @Operation(summary = "Get a list of all the comments a user has received")
+    public List<CommentDTO> getReceivedComments(
+            @Parameter(description = "The id of the user, whose received comments to fetch", required = true)
+            @PathVariable Long id){
         return userProfileService.findAllReceivedComments(id);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ProfileDTO createNewProfile(@RequestBody ProfileDTO ProfileDTO){
+    @Operation(summary = "Create a new user profile")
+    public ProfileDTO createNewProfile(
+            @Parameter(description = "Data for the new user profile", required = true)
+            @RequestBody ProfileDTO ProfileDTO){
         return userProfileService.save(ProfileDTO);
     }
 
     @PostMapping({"/{id}" + RECEIVED_COMMENT_PATH})
     @ResponseStatus(HttpStatus.OK)
-    public CommentDTO addCommentForProfile(@PathVariable Long id, @RequestBody CommentDTO commentDTO){
+    @Operation(summary = "Post a comment for a user profile")
+    public CommentDTO addCommentForProfile(
+            @Parameter(description = "The id of the user profile", required = true)
+            @PathVariable Long id,
+            @Parameter(description = "The data of the comment to be posted", required = true)
+            @RequestBody CommentDTO commentDTO){
         return userProfileService.addComment(id, commentDTO);
     }
 
     @PutMapping({"/{id}"})
     @ResponseStatus(HttpStatus.OK)
-    public ProfileDTO updateProfile(@PathVariable Long id, @RequestBody ProfileDTO ProfileDTO){
+    @Operation(summary = "Update an exiting user profile")
+    public ProfileDTO updateProfile(
+            @Parameter(description = "The id of the user profile to update", required = true)
+            @PathVariable Long id,
+            @Parameter(description = "New data for the user profile to update", required = true)
+            @RequestBody ProfileDTO ProfileDTO){
         return userProfileService.update(id, ProfileDTO);
     }
 
     @DeleteMapping({"/{id}"})
     @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Delete a user profile")
     public void deleteProfile(@PathVariable Long id){
         userProfileService.deleteById(id);
     }

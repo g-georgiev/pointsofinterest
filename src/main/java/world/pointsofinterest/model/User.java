@@ -44,4 +44,11 @@ public class User extends BaseEntity {
     public void setProfile(Profile profile) {
         this.profile = profile;
     }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "username='" + username + '\'' +
+                '}';
+    }
 }

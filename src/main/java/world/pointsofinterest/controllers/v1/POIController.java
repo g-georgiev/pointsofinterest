@@ -1,5 +1,7 @@
 package world.pointsofinterest.controllers.v1;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import world.pointsofinterest.api.v1.model.CommentDTO;
@@ -25,9 +27,16 @@ public class POIController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<POIResponseDTO> getListOfPOIs(@RequestParam(required = false, name = "lat") Double latitude,
-                                              @RequestParam(required = false, name = "lon") Double longitude,
-                                              @RequestParam(required = false, name = "r") Double rangeInKm){
+    @Operation(summary = "Get a list of all points of interest with possible range filtration",
+    description = "To apply the additional range filtration all the params must be passed." +
+            "The range is defined by the latitude and longitude of its center and its radius.")
+    public List<POIResponseDTO> getListOfPOIs(
+            @Parameter(description = "The latitude of the center of the range")
+            @RequestParam(required = false, name = "lat") Double latitude,
+            @Parameter(description = "The longitude of the center of the range")
+            @RequestParam(required = false, name = "lon") Double longitude,
+            @Parameter(description = "The radius of the range in kilometers")
+            @RequestParam(required = false, name = "r") Double rangeInKm){
         List<POIResponseDTO> foundPOI;
         if(latitude != null && longitude != null && rangeInKm != null){
             foundPOI = poiService.findAllByRange(latitude, longitude, rangeInKm);
@@ -40,35 +49,57 @@ public class POIController {
 
     @GetMapping({"/{id}"})
     @ResponseStatus(HttpStatus.OK)
-    public POIResponseDTO getPOIById(@PathVariable Long id){
+    @Operation(summary = "Get a point of interest by ID")
+    public POIResponseDTO getPOIById(
+            @Parameter(description = "The id of the point of interest to fetch", required = true)
+            @PathVariable Long id){
         return poiService.findById(id);
     }
 
     @GetMapping({"/{id}" + POI_COMMENT_PATH})
     @ResponseStatus(HttpStatus.OK)
-    public List<CommentDTO> getAllCommentsForPOI(@PathVariable Long id){ return poiService.findAllComments(id); }
+    @Operation(summary = "Get a list of all the comments for a given point of interest")
+    public List<CommentDTO> getAllCommentsForPOI(
+            @Parameter(description = "The id of the point of interest whose comments to fetch", required = true)
+            @PathVariable Long id){ return poiService.findAllComments(id); }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public POIResponseDTO createNewPOI(@RequestBody POIRequestDTO poiDTO){
+    @Operation(summary = "Create a new point of interest")
+    public POIResponseDTO createNewPOI(
+            @Parameter(description = "Data for the new point of interest", required = true)
+            @RequestBody POIRequestDTO poiDTO){
         return poiService.save(poiDTO);
     }
 
     @PostMapping({"/{id}" + POI_COMMENT_PATH})
     @ResponseStatus(HttpStatus.OK)
-    public CommentDTO addCommentForPOI(@PathVariable Long id, @RequestBody CommentDTO commentDTO){
+    @Operation(summary = "Post a comment for a point of interest")
+    public CommentDTO addCommentForPOI(
+            @Parameter(description = "The id of the point of interest", required = true)
+            @PathVariable Long id,
+            @Parameter(description = "The data of the comment to be posted", required = true)
+            @RequestBody CommentDTO commentDTO){
         return poiService.addComment(id, commentDTO);
     }
 
     @PutMapping({"/{id}"})
     @ResponseStatus(HttpStatus.OK)
-    public POIResponseDTO updatePOI(@PathVariable Long id, @RequestBody POIRequestDTO poiDTO){
+    @Operation(summary = "Update an exiting point of interest")
+    public POIResponseDTO updatePOI(
+            @Parameter(description = "The id of the point of interest to update", required = true)
+            @PathVariable Long id,
+            @Parameter(description = "New data for the point of interest to update", required = true)
+            @RequestBody POIRequestDTO poiDTO){
         return poiService.update(id, poiDTO);
     }
 
     @DeleteMapping({"/{id}"})
     @ResponseStatus(HttpStatus.OK)
-    public void deletePOI(@PathVariable Long id){
+    @Operation(summary = "Delete a point of interest")
+    public void deletePOI(
+            @Parameter(description = "The id of the point of interest to delete", required = true)
+            @PathVariable Long id){
         poiService.deleteById(id);
     }
 }

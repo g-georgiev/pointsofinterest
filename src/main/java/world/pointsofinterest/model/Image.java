@@ -54,4 +54,13 @@ public class Image extends Multimedia {
     public void setVideo(Video video) {
         this.video = video;
     }
+
+    @Override
+    public String toString() {
+        return "Image{" +
+                "poi=" + poi.getId() +
+                ", profile=" + profile.getUser().getUsername() +
+                ", video=" + video.getId() +
+                '}';
+    }
 }

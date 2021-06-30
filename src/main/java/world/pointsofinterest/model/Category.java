@@ -54,4 +54,12 @@ public class Category extends BaseEntity {
     public void addPOI(POI POI) {
         POIs.add(POI);
     }
+
+    @Override
+    public String toString() {
+        return "Category{" +
+                "name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                '}';
+    }
 }

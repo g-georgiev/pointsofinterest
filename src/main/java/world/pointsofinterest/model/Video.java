@@ -40,4 +40,12 @@ public class Video extends Multimedia {
     public POI getPoi() {
         return poi;
     }
+
+    @Override
+    public String toString() {
+        return "Video{" +
+                "poi=" + poi.getId() +
+                ", thumbnail=" + thumbnail.getId() +
+                '}';
+    }
 }

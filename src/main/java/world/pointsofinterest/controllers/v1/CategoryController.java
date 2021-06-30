@@ -1,5 +1,11 @@
 package world.pointsofinterest.controllers.v1;
 
+import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import world.pointsofinterest.api.v1.model.CategoryDTO;
@@ -26,37 +32,55 @@ public class CategoryController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Get a list of all categories")
     public List<CategoryDTO> getListOfCategories(){
         return categoryService.findAll();
     }
 
     @GetMapping({"/{id}"})
     @ResponseStatus(HttpStatus.OK)
-    public CategoryDTO getCategoryById(@PathVariable Long id){
+    @Operation(summary = "Get a category by ID")
+    public CategoryDTO getCategoryById(
+            @Parameter(description = "The id of the category to fetch", required = true)
+            @PathVariable Long id){
         return categoryService.findById(id);
     }
 
     @GetMapping({"/{id}" + POI_PATH})
     @ResponseStatus(HttpStatus.OK)
-    public List<POIResponseDTO> getPOIByCategoryId(@PathVariable Long id){
+    @Operation(summary = "Get a list of all the points of interest of a given category")
+    public List<POIResponseDTO> getPOIByCategoryId(
+            @Parameter(description = "The id of the category of the points of interest to fetch", required = true)
+            @PathVariable Long id){
         return poiService.findAllByCategory(id);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public CategoryDTO createNewCategory(@RequestBody CategoryDTO categoryDTO){
+    @Operation(summary = "Create a new category")
+    public CategoryDTO createNewCategory(
+            @Parameter(description = "Data for the new category", required = true)
+            @RequestBody CategoryDTO categoryDTO){
         return categoryService.save(categoryDTO);
     }
 
     @PutMapping({"/{id}"})
     @ResponseStatus(HttpStatus.OK)
-    public CategoryDTO updateCategory(@PathVariable Long id, @RequestBody CategoryDTO categoryDTO){
+    @Operation(summary = "Update an exiting category")
+    public CategoryDTO updateCategory(
+            @Parameter(description = "The id of the category to update", required = true)
+            @PathVariable Long id,
+            @Parameter(description = "New data for the category to update", required = true)
+            @RequestBody CategoryDTO categoryDTO){
         return categoryService.update(id, categoryDTO);
     }
 
     @DeleteMapping({"/{id}"})
     @ResponseStatus(HttpStatus.OK)
-    public void deleteCategory(@PathVariable Long id){
+    @Operation(summary = "Delete a category")
+    public void deleteCategory(
+            @Parameter(description = "The id of the category to delete", required = true)
+            @PathVariable Long id){
         categoryService.deleteById(id);
     }
 }
