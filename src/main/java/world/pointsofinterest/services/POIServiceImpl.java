@@ -4,19 +4,22 @@ import com.javadocmd.simplelatlng.LatLng;
 import com.javadocmd.simplelatlng.LatLngTool;
 import com.javadocmd.simplelatlng.util.LengthUnit;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import world.pointsofinterest.api.v1.mappers.CommentMapper;
 import world.pointsofinterest.api.v1.mappers.POIMapper;
 import world.pointsofinterest.api.v1.model.CommentDTO;
+import world.pointsofinterest.api.v1.model.ImageDTO;
 import world.pointsofinterest.api.v1.model.POIRequestDTO;
 import world.pointsofinterest.api.v1.model.POIResponseDTO;
 import world.pointsofinterest.model.Category;
-import world.pointsofinterest.model.Comment;
 import world.pointsofinterest.model.POI;
 import world.pointsofinterest.model.Profile;
 import world.pointsofinterest.repositories.*;
 import world.pointsofinterest.services.interfaces.CommentService;
+import world.pointsofinterest.services.interfaces.ImageService;
 import world.pointsofinterest.services.interfaces.POIService;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -36,11 +39,12 @@ public class POIServiceImpl implements POIService {
     private final CommentMapper commentMapper;
 
     private final CommentService commentService;
+    private final ImageService imageService;
 
     public POIServiceImpl(POIRepository poiRepository, CategoryRepository categoryRepository,
                           ImageRepository imageRepository, VideoRepository videoRepository,
                           ProfileRepository profileRepository, POIMapper poiMapper,
-                          CommentMapper commentMapper, CommentService commentService) {
+                          CommentMapper commentMapper, CommentService commentService, ImageService imageService) {
         this.poiRepository = poiRepository;
         this.categoryRepository = categoryRepository;
         this.imageRepository = imageRepository;
@@ -49,6 +53,7 @@ public class POIServiceImpl implements POIService {
         this.poiMapper = poiMapper;
         this.commentMapper = commentMapper;
         this.commentService = commentService;
+        this.imageService = imageService;
     }
 
     @Override
@@ -66,6 +71,7 @@ public class POIServiceImpl implements POIService {
                 .orElseThrow(ResourceNotFoundException::new);
     }
 
+    @Override
     public List<POIResponseDTO> findAllByCategory(Long id){
         Category category = categoryRepository.findById(id).orElseThrow(ResourceNotFoundException::new);
         return category.getPOIs()
@@ -83,6 +89,7 @@ public class POIServiceImpl implements POIService {
                 .collect(Collectors.toList());
     }
 
+    @Override
     public List<POIResponseDTO> findAllByRange(Double currentLat, Double currentLon, Double rangeInKm){
         LatLng currentPoint = new LatLng(currentLat, currentLon);
         List<POIResponseDTO> foundPOIs = new ArrayList<>();
@@ -120,6 +127,18 @@ public class POIServiceImpl implements POIService {
     public CommentDTO addComment(Long id, CommentDTO commentDTO) {
         commentDTO.setPOIId(id);
         return commentService.save(commentDTO);
+    }
+
+    @Override
+    public List<ImageDTO> findAllImages(Long id) {
+        POI poi = poiRepository.findById(id).orElseThrow(ResourceNotFoundException::new);
+        return imageService.findAllByPOI(poi);
+    }
+
+    @Override
+    public ImageDTO addImage(Long id, ImageDTO imageDTO) {
+        imageDTO.setPoiId(id);
+        return imageService.save(imageDTO);
     }
 
     @Override

@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import world.pointsofinterest.api.v1.model.CommentDTO;
+import world.pointsofinterest.api.v1.model.ImageDTO;
 import world.pointsofinterest.api.v1.model.ProfileDTO;
 import world.pointsofinterest.api.v1.model.POIResponseDTO;
 import world.pointsofinterest.services.interfaces.POIService;
@@ -72,6 +73,15 @@ public class UserProfileController {
         return userProfileService.findAllReceivedComments(id);
     }
 
+    @GetMapping({"/{id}" + IMAGE_PATH})
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Get a list of all profile images a user has uploaded")
+    public List<ImageDTO> getProfileImages(
+            @Parameter(description = "The id of the user, whose profile images to fetch", required = true)
+            @PathVariable Long id){
+        return userProfileService.findAllImages(id);
+    }
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Create a new user profile")
@@ -90,6 +100,17 @@ public class UserProfileController {
             @Parameter(description = "The data of the comment to be posted", required = true)
             @RequestBody CommentDTO commentDTO){
         return userProfileService.addComment(id, commentDTO);
+    }
+
+    @PostMapping({"/{id}" + IMAGE_PATH})
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Add an image for a user profile")
+    public ImageDTO addImageForProfile(
+            @Parameter(description = "The id of the user profile", required = true)
+            @PathVariable Long id,
+            @Parameter(description = "The image to be added", required = true)
+            @RequestBody ImageDTO imageDTO){
+        return userProfileService.addImage(id, imageDTO);
     }
 
     @PutMapping({"/{id}"})

@@ -18,10 +18,10 @@ public class POI extends Post {
     @Column(name = "longitude", nullable = false)
     private Double longitude;
 
-    @OneToMany(mappedBy = "poi")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "poi")
     private Set<Video> videoSet = new HashSet<>();
 
-    @OneToMany(mappedBy = "poi")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "poi")
     private Set<Image> imageSet = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "poi")

@@ -24,7 +24,8 @@ public class Image extends Multimedia {
     public Image() {
     }
 
-    public Image(Long id, String description, Double rating, URL url, Byte[] bin, POI poi, Profile profile, Video video) {
+    public Image(Long id, String description, Double rating, URL url, Byte[] bin, POI poi,
+                 Profile profile, Video video) {
         super(id, description, rating, url, bin);
         this.poi = poi;
         this.profile = profile;

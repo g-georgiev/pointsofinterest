@@ -15,11 +15,13 @@ public class POIMapper {
     private final CommentMapper commentMapper;
     private final ProfileMapper profileMapper;
     private final CategoryMapper categoryMapper;
+    private final ImageMapper imageMapper;
 
-    public POIMapper(CommentMapper commentMapper, ProfileMapper profileMapper, CategoryMapper categoryMapper) {
+    public POIMapper(CommentMapper commentMapper, ProfileMapper profileMapper, CategoryMapper categoryMapper, ImageMapper imageMapper) {
         this.commentMapper = commentMapper;
         this.profileMapper = profileMapper;
         this.categoryMapper = categoryMapper;
+        this.imageMapper = imageMapper;
     }
 
     public POIResponseDTO POIToPOIDTO(POI POI){
@@ -27,7 +29,7 @@ public class POIMapper {
         Boolean hasComment = !POI.getComments().isEmpty();
 
         Set<ImageDTO> images = POI.getImageSet().stream()
-                .map(image -> new ImageDTO(image.getId(), image.getDescription(), image.getRating()))
+                .map(imageMapper::imageToImageDTO)
                 .collect(Collectors.toSet());
 
         Set<VideoDTO> videos = POI.getVideoSet().stream()

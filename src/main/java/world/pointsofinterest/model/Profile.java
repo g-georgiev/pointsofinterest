@@ -28,6 +28,9 @@ public class Profile extends Post {
     @ManyToMany(mappedBy = "profiles")
     private Set<POI> postedPOIs = new HashSet<>();
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "profile")
+    private Set<Image> imageSet = new HashSet<>();
+
     public Profile() {
     }
 
@@ -58,6 +61,14 @@ public class Profile extends Post {
 
     public List<Comment> getPostedComments() {
         return postedComments;
+    }
+
+    public Set<Image> getImageSet() {
+        return imageSet;
+    }
+
+    public void setImageSet(Set<Image> imageSet) {
+        this.imageSet = imageSet;
     }
 
     public void setPostedComments(List<Comment> postedComments) {

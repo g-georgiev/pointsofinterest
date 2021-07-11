@@ -3,7 +3,6 @@ package world.pointsofinterest.services;
 import org.springframework.stereotype.Service;
 import world.pointsofinterest.api.v1.mappers.CommentMapper;
 import world.pointsofinterest.api.v1.model.CommentDTO;
-import world.pointsofinterest.model.Comment;
 import world.pointsofinterest.model.POI;
 import world.pointsofinterest.model.Profile;
 import world.pointsofinterest.repositories.CommentRepository;
@@ -51,6 +50,13 @@ public class CommentServiceImpl implements CommentService {
         return profile.getPostedComments().stream()
                 .map(commentMapper::commentToCommentDTO)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public CommentDTO findById(Long id) {
+        return commentRepository.findById(id)
+                .map(commentMapper::commentToCommentDTO)
+                .orElseThrow(ResourceNotFoundException::new);
     }
 
     @Override

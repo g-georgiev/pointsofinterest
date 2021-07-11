@@ -4,11 +4,14 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import world.pointsofinterest.api.v1.model.CommentDTO;
+import world.pointsofinterest.api.v1.model.ImageDTO;
 import world.pointsofinterest.api.v1.model.POIRequestDTO;
 import world.pointsofinterest.api.v1.model.POIResponseDTO;
 import world.pointsofinterest.services.interfaces.POIService;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -63,6 +66,13 @@ public class POIController {
             @Parameter(description = "The id of the point of interest whose comments to fetch", required = true)
             @PathVariable Long id){ return poiService.findAllComments(id); }
 
+    @GetMapping({"/{id}" + POI_IMAGE_PATH})
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Get a list of all the images for a given point of interest")
+    public List<ImageDTO> getAllImagesForPOI(
+            @Parameter(description = "The id of the point of interest whose images to fetch", required = true)
+            @PathVariable Long id){ return poiService.findAllImages(id); }
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Create a new point of interest")
@@ -81,6 +91,17 @@ public class POIController {
             @Parameter(description = "The data of the comment to be posted", required = true)
             @RequestBody CommentDTO commentDTO){
         return poiService.addComment(id, commentDTO);
+    }
+
+    @PostMapping({"/{id}" + POI_IMAGE_PATH})
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Add an image for a point of interest")
+    public ImageDTO addImageForPOI(
+            @Parameter(description = "The id of the point of interest", required = true)
+            @PathVariable Long id,
+            @Parameter(description = "The image to be added", required = true)
+            @RequestBody ImageDTO imageDTO) throws IOException {
+        return poiService.addImage(id, imageDTO);
     }
 
     @PutMapping({"/{id}"})

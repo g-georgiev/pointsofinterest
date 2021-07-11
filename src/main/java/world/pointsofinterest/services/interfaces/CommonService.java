@@ -1,11 +1,10 @@
 package world.pointsofinterest.services.interfaces;
 
-import java.util.List;
 
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 public interface CommonService<REQ, RES, ID> {
-
-    List<RES> findAll();
 
     RES findById(ID id);
 
