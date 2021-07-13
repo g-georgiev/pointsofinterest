@@ -4,7 +4,7 @@ import org.springframework.stereotype.Component;
 import world.pointsofinterest.api.v1.model.*;
 import world.pointsofinterest.model.Category;
 import world.pointsofinterest.model.POI;
-import world.pointsofinterest.model.Profile;
+import world.pointsofinterest.model.ProfilePOI;
 
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -40,7 +40,11 @@ public class POIMapper {
                 .map(categoryMapper::categoryToCategoryDTO)
                 .collect(Collectors.toSet());
 
-        Set<ProfileDTO> profiles = POI.getProfiles().stream()
+        Set<ProfileDTO> posters = POI.getProfilePOIs(false).stream()
+                .map(profileMapper::profileToProfileDTO)
+                .collect(Collectors.toSet());
+
+        Set<ProfileDTO> checkIns = POI.getProfilePOIs(true).stream()
                 .map(profileMapper::profileToProfileDTO)
                 .collect(Collectors.toSet());
 
@@ -50,10 +54,10 @@ public class POIMapper {
 
         return new POIResponseDTO(
                 POI.getId(), POI.getLatitude(), POI.getLongitude(), POI.getDescription(),
-                POI.getRating(), hasComment, images, videos, categories, profiles, comments);
+                POI.getRating(), hasComment, images, videos, categories, posters, checkIns, comments);
     }
 
-    public POI POIDTOToPOI(POIRequestDTO POIRequestDTO, Set<Category> categories, Set<Profile> profiles) {
+    public POI POIDTOToPOI(POIRequestDTO POIRequestDTO, Set<Category> categories, Set<ProfilePOI> profilePOIS) {
         return new POI(
                 null,
                 POIRequestDTO.getDescription(),
@@ -61,7 +65,7 @@ public class POIMapper {
                 POIRequestDTO.getLatitude(),
                 POIRequestDTO.getLongitude(),
                 categories,
-                profiles
+                profilePOIS
         );
     }
 

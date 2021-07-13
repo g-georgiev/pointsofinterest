@@ -3,10 +3,7 @@ package world.pointsofinterest.model;
 import world.pointsofinterest.model.superclasses.Post;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "poi")
@@ -32,21 +29,27 @@ public class POI extends Post {
             inverseJoinColumns = @JoinColumn(name = "category_id"))
     private Set<Category> categories;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "poi_profiles", joinColumns = @JoinColumn(name = "poi_id"),
-            inverseJoinColumns = @JoinColumn(name = "profile_id"))
-    private Set<Profile> profiles;
+//    @ManyToMany(fetch = FetchType.EAGER)
+//    @JoinTable(name = "poi_profiles", joinColumns = @JoinColumn(name = "poi_id"),
+//            inverseJoinColumns = @JoinColumn(name = "profile_id"))
+//    private Set<Profile> profiles;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "poi")
+    private Set<ProfilePOI> profilePOIS;
+
+    @Column(name = "is_approved", nullable = false)
+    private Boolean isApproved = false;
 
     public POI() {
     }
 
     public POI(Long id, String description, Double rating, Double latitude, Double longitude,
-               Set<Category> categories, Set<Profile> profiles) {
+               Set<Category> categories, Set<ProfilePOI> profilePOIS) {
         super(id, description, rating);
         this.latitude = latitude;
         this.longitude = longitude;
         this.categories = categories;
-        this.profiles = profiles;
+        this.profilePOIS = profilePOIS;
     }
 
     public Double getLatitude() {
@@ -97,12 +100,27 @@ public class POI extends Post {
         this.categories = categories;
     }
 
-    public Set<Profile> getProfiles() {
-        return profiles;
+    public Set<ProfilePOI> getProfilePOIS() {
+        return profilePOIS;
     }
 
-    public void setProfiles(Set<Profile> profiles) {
-        this.profiles = profiles;
+    public void setProfilePOIS(Set<ProfilePOI> profilePOIS) {
+        this.profilePOIS = profilePOIS;
+    }
+
+    public void addProfilePOIS(ProfilePOI profilePOI) {
+        this.profilePOIS.add(profilePOI);
+    }
+
+    public Set<Profile> getProfilePOIs(Boolean checkIn) {
+        Objects.requireNonNull(checkIn);
+        Set<Profile> profiles = new HashSet<>();
+
+        profilePOIS.forEach(profilePOI -> {
+            if(checkIn == profilePOI.getCheckIn()) {profiles.add(profilePOI.getProfile());}
+        });
+
+        return profiles;
     }
 
     public void addImage(Image Image) {
@@ -122,11 +140,14 @@ public class POI extends Post {
         return "POI{" +
                 "latitude=" + latitude +
                 ", longitude=" + longitude +
-                ", videoSet=" + videoSet +
-                ", imageSet=" + imageSet +
-                ", comments=" + comments +
-                ", categories=" + categories +
-                ", profiles=" + profiles +
                 '}';
+    }
+
+    public Boolean getApproved() {
+        return isApproved;
+    }
+
+    public void setApproved(Boolean approved) {
+        isApproved = approved;
     }
 }

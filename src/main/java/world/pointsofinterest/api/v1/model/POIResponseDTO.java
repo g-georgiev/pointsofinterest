@@ -14,12 +14,13 @@ public class POIResponseDTO {
     private Set<ImageDTO> images;
     private Set<VideoDTO> videos;
     private Set<CategoryDTO> categories;
-    private Set<ProfileDTO> profiles;
+    private Set<ProfileDTO> posters;
+    private Set<ProfileDTO> checkIns;
     private Set<CommentDTO> comments;
 
     public POIResponseDTO(Long id, Double latitude, Double longitude, String description, Double rating,
                           Boolean hasComments, Set<ImageDTO> images, Set<VideoDTO> videos,
-                          Set<CategoryDTO> categories, Set<ProfileDTO> profiles, Set<CommentDTO> comments) {
+                          Set<CategoryDTO> categories, Set<ProfileDTO> posters, Set<ProfileDTO> checkIns, Set<CommentDTO> comments) {
         this.id = id;
         this.latitude = latitude;
         this.longitude = longitude;
@@ -29,7 +30,8 @@ public class POIResponseDTO {
         this.images = images;
         this.videos = videos;
         this.categories = categories;
-        this.profiles = profiles;
+        this.posters = posters;
+        this.checkIns = checkIns;
         this.comments = comments;
     }
 
@@ -105,12 +107,20 @@ public class POIResponseDTO {
         this.categories = categories;
     }
 
-    public Set<ProfileDTO> getProfiles() {
-        return profiles;
+    public Set<ProfileDTO> getPosters() {
+        return posters;
     }
 
-    public void setProfiles(Set<ProfileDTO> profiles) {
-        this.profiles = profiles;
+    public void setPosters(Set<ProfileDTO> posters) {
+        this.posters = posters;
+    }
+
+    public Set<ProfileDTO> getCheckIns() {
+        return checkIns;
+    }
+
+    public void setCheckIns(Set<ProfileDTO> checkIns) {
+        this.checkIns = checkIns;
     }
 
     public Set<CommentDTO> getComments() {

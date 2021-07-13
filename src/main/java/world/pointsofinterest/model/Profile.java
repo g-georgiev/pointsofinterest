@@ -3,10 +3,7 @@ package world.pointsofinterest.model;
 import world.pointsofinterest.model.superclasses.Post;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "profiles")
@@ -25,8 +22,11 @@ public class Profile extends Post {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "profile")
     private List<Comment> receivedComments = new ArrayList<>();
 
-    @ManyToMany(mappedBy = "profiles")
-    private Set<POI> postedPOIs = new HashSet<>();
+//    @ManyToMany(mappedBy = "profiles")
+//    private Set<POI> postedPOIs = new HashSet<>();
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "profile")
+    private Set<ProfilePOI> profilePOIS;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "profile")
     private Set<Image> imageSet = new HashSet<>();
@@ -49,10 +49,6 @@ public class Profile extends Post {
 
     public User getUser() {
         return user;
-    }
-
-    public Set<POI> getPostedPOIs() {
-        return postedPOIs;
     }
 
     public List<Comment> getReceivedComments() {
@@ -83,14 +79,6 @@ public class Profile extends Post {
         this.receivedComments = receivedComments;
     }
 
-    public void setPostedPOIs(Set<POI> postedPOIs) {
-        this.postedPOIs = postedPOIs;
-    }
-
-    public void addPOI(POI POI) {
-        postedPOIs.add(POI);
-    }
-
     public void addComment(Comment comment) {
         receivedComments.add(comment);
     }
@@ -105,5 +93,16 @@ public class Profile extends Post {
                 "banned=" + banned +
                 ", user=" + user +
                 '}';
+    }
+
+    public Set<POI> getProfilePOIs(Boolean checkIn) {
+        Objects.requireNonNull(checkIn);
+        Set<POI> pois = new HashSet<>();
+
+        profilePOIS.forEach(profilePOI -> {
+            if(checkIn == profilePOI.getCheckIn()) { pois.add(profilePOI.getPoi()); }
+        });
+
+        return pois;
     }
 }

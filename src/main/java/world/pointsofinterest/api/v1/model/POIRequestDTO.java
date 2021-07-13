@@ -9,17 +9,17 @@ public class POIRequestDTO {
     private String description;
     private Double rating;
     private List<Long> categories;
-    private List<Long> profiles;
+    private List<Long> posters;
 
     public POIRequestDTO(Long id, Double latitude, Double longitude, String description,
-                         Double rating, List<Long> categories, List<Long> profiles) {
+                         Double rating, List<Long> categories, List<Long> posters) {
         this.id = id;
         this.latitude = latitude;
         this.longitude = longitude;
         this.description = description;
         this.rating = rating;
         this.categories = categories;
-        this.profiles = profiles;
+        this.posters = posters;
     }
 
     public Long getId() {
@@ -70,11 +70,11 @@ public class POIRequestDTO {
         this.categories = categories;
     }
 
-    public List<Long> getProfiles() {
-        return profiles;
+    public List<Long> getPosters() {
+        return posters;
     }
 
-    public void setProfiles(List<Long> profiles) {
-        this.profiles = profiles;
+    public void setPosters(List<Long> posters) {
+        this.posters = posters;
     }
 }

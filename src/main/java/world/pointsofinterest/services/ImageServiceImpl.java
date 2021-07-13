@@ -39,6 +39,13 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
+    public List<ImageDTO> findAll() {
+        return imageRepository.findAll().stream()
+                .map(imageMapper::imageToImageDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public List<ImageDTO> findAllByPOI(POI poi) {
         return poi.getImageSet().stream()
                 .map(imageMapper::imageToImageDTO)

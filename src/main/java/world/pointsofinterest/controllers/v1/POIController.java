@@ -115,6 +115,17 @@ public class POIController {
         return poiService.update(id, poiDTO);
     }
 
+    @PostMapping({"/{id}/checkin"})
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Check into a point of interest")
+    public POIResponseDTO checkInPOI(
+            @Parameter(description = "The id of the point of interest to check into", required = true)
+            @PathVariable Long id,
+            @Parameter(description = "The user profile that checked in", required = true)
+            @RequestParam(name = "profile_id") Long profile_id){
+        return poiService.checkIn(id, profile_id);
+    }
+
     @DeleteMapping({"/{id}"})
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Delete a point of interest")

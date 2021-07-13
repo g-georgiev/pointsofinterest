@@ -13,7 +13,7 @@ public interface POIService extends CommonService<POIRequestDTO, POIResponseDTO,
 
     List<POIResponseDTO> findAllByCategory(Long id);
 
-    List<POIResponseDTO> findAllPostedPOIsByProfile(Long id);
+    List<POIResponseDTO> findAllPOIsByProfile(Long id, Boolean checkIn);
 
     List<POIResponseDTO> findAllByRange(Double currentLat, Double currentLon, Double rangeInKm);
 
@@ -24,5 +24,7 @@ public interface POIService extends CommonService<POIRequestDTO, POIResponseDTO,
     List<ImageDTO> findAllImages(Long id);
 
     ImageDTO addImage(Long id, ImageDTO image) throws IOException;
+
+    POIResponseDTO checkIn(Long poiId, Long profileId);
 
 }

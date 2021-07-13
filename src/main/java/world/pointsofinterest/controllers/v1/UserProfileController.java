@@ -21,6 +21,7 @@ public class UserProfileController {
     public static final String POSTED_COMMENT_PATH = "/posted_comments";
     public static final String RECEIVED_COMMENT_PATH = "/comments";
     public static final String POI_PATH = "/poi";
+    public static final String CHECK_INS_PATH = "/checkins";
 
     private final UserProfileService userProfileService;
     private final POIService poiService;
@@ -52,7 +53,16 @@ public class UserProfileController {
     public List<POIResponseDTO> getPostedPOIsByProfileId(
             @Parameter(description = "The id of the user, whose posted points of interest to fetch", required = true)
             @PathVariable Long id){
-        return poiService.findAllPostedPOIsByProfile(id);
+        return poiService.findAllPOIsByProfile(id, false);
+    }
+
+    @GetMapping({"/{id}" + CHECK_INS_PATH})
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Get a list of all the points of interest a user has checked into")
+    public List<POIResponseDTO> getCheckedInPOIsByProfileId(
+            @Parameter(description = "The id of the user, whose posted points of interest to fetch", required = true)
+            @PathVariable Long id){
+        return poiService.findAllPOIsByProfile(id, true);
     }
 
     @GetMapping({"/{id}" + POSTED_COMMENT_PATH})
