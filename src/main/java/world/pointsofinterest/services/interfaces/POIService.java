@@ -8,22 +8,12 @@ import java.util.List;
 
 @Transactional
 public interface POIService extends CommonService<POIRequestDTO, POIResponseDTO, Long> {
-    
-    List<POIResponseDTO> findAll();
 
     List<POIResponseDTO> findAllByCategory(Long id);
 
     List<POIResponseDTO> findAllPOIsByProfile(Long id, Boolean checkIn);
 
     List<POIResponseDTO> findAllByRange(Double currentLat, Double currentLon, Double rangeInKm);
-
-    List<CommentDTO> findAllComments(Long id);
-
-    CommentDTO addComment(Long id, CommentDTO commentDTO);
-
-    List<ImageDTO> findAllImages(Long id);
-
-    ImageDTO addImage(Long id, ImageDTO image) throws IOException;
 
     POIResponseDTO checkIn(Long poiId, Long profileId);
 

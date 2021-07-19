@@ -1,11 +1,29 @@
 package world.pointsofinterest.api.v1.model;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.Size;
+
 public class CommentDTO {
+    @Positive(message = "ID must be positive")
     private Long id;
+
+    @NotNull(message = "Comment is a required property")
+    @Size(min = 10, max = 300, message = "Comment must be between 10 and 300 characters long")
     private String comment;
+
+    @NotNull(message = "Poster name is a required property")
+    @NotEmpty(message = "Poster name cannot be an empty string")
     private String posterName;
+
+    @Positive(message = "ID must be positive")
     private Long posterId;
+
+    @Positive(message = "ID must be positive")
     private Long POIId;
+
+    @Positive(message = "ID must be positive")
     private Long profileId;
 
     public CommentDTO(Long id, String comment, String posterName, Long posterId, Long poiId, Long profileId) {

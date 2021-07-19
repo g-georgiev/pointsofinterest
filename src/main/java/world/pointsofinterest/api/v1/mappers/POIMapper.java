@@ -40,11 +40,11 @@ public class POIMapper {
                 .map(categoryMapper::categoryToCategoryDTO)
                 .collect(Collectors.toSet());
 
-        Set<ProfileDTO> posters = POI.getProfilePOIs(false).stream()
+        Set<ProfileDTO> posters = POI.getProfiles(false).stream()
                 .map(profileMapper::profileToProfileDTO)
                 .collect(Collectors.toSet());
 
-        Set<ProfileDTO> checkIns = POI.getProfilePOIs(true).stream()
+        Set<ProfileDTO> checkIns = POI.getProfiles(true).stream()
                 .map(profileMapper::profileToProfileDTO)
                 .collect(Collectors.toSet());
 

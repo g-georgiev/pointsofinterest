@@ -20,9 +20,12 @@ public class ImageMapper {
         Long profileId = null;
         if(image.getPoi() != null) { POIId = image.getPoi().getId(); }
         if(image.getProfile() != null) { profileId = image.getProfile().getId(); }
+        byte[] imageBin = null;
+        if(image.getBin() != null && image.getBin().length > 0){
+            imageBin = decompressImage(image.getBin());
+        }
 
-        return new ImageDTO(image.getId(), decompressImage(image.getBin()),
-                image.getUrl(), image.getDescription(), image.getRating(), POIId, profileId);
+        return new ImageDTO(image.getId(), imageBin, image.getUrl(), image.getDescription(), image.getRating(), POIId, profileId);
     }
 
     public Image imageDTOToImage(ImageDTO imageDTO, POI poi, Profile profile){

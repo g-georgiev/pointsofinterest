@@ -26,7 +26,7 @@ public class Profile extends Post {
 //    private Set<POI> postedPOIs = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "profile")
-    private Set<ProfilePOI> profilePOIS;
+    private Set<ProfilePOI> profilePOIS = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "profile")
     private Set<Image> imageSet = new HashSet<>();
@@ -67,6 +67,10 @@ public class Profile extends Post {
         this.imageSet = imageSet;
     }
 
+    public void addImage(Image image) {
+        this.imageSet.add(image);
+    }
+
     public void setPostedComments(List<Comment> postedComments) {
         this.postedComments = postedComments;
     }
@@ -104,5 +108,9 @@ public class Profile extends Post {
         });
 
         return pois;
+    }
+
+    public void addProfilePOI(ProfilePOI profilePOI) {
+        this.profilePOIS.add(profilePOI);
     }
 }

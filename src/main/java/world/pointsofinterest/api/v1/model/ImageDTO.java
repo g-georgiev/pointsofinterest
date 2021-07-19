@@ -1,14 +1,34 @@
 package world.pointsofinterest.api.v1.model;
 
+import org.hibernate.validator.constraints.Range;
+import world.pointsofinterest.api.v1.constraints.CheckAtLeastOneNotNull;
+
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 import java.net.URL;
 
+@CheckAtLeastOneNotNull(fieldNames = {"data", "url"}, message = "Either image data or URL must be provided")
 public class ImageDTO {
+    @Positive(message = "ID must be positive")
     private Long id;
+
     private byte[] data;
+
     private URL url;
+
+    @NotNull(message = "Description is a required property")
+    @NotEmpty(message = "Description cannot be an empty string")
     private String description;
+
+    @NotNull(message = "Rating is a required property")
+    @Range(min = 0, max = 10, message = "Rating must be between 0 and 10")
     private Double rating;
+
+    @Positive(message = "ID must be positive")
     private Long poiId;
+
+    @Positive(message = "ID must be positive")
     private Long profileId;
 
     public ImageDTO(Long id, byte[] data, URL url, String description, Double rating, Long poiId, Long profileId) {

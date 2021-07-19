@@ -10,6 +10,7 @@ import world.pointsofinterest.repositories.POIRepository;
 import world.pointsofinterest.repositories.ProfileRepository;
 import world.pointsofinterest.services.interfaces.CommentService;
 
+import java.security.InvalidParameterException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,37 +18,48 @@ import java.util.stream.Collectors;
 public class CommentServiceImpl implements CommentService {
 
     private final CommentRepository commentRepository;
-    private final CommentMapper commentMapper;
     private final ProfileRepository profileRepository;
     private final POIRepository poiRepository;
 
-    public CommentServiceImpl(CommentRepository commentRepository, CommentMapper commentMapper,
-                              ProfileRepository profileRepository, POIRepository poiRepository) {
+    private final CommentMapper commentMapper;
+
+    public CommentServiceImpl(CommentRepository commentRepository,
+                              ProfileRepository profileRepository,
+                              POIRepository poiRepository,
+                              CommentMapper commentMapper) {
         this.commentRepository = commentRepository;
-        this.commentMapper = commentMapper;
         this.profileRepository = profileRepository;
         this.poiRepository = poiRepository;
+        this.commentMapper = commentMapper;
     }
 
     @Override
-    public List<CommentDTO> findAllByPOI(POI poi) {
+    public List<CommentDTO> findAllByPOI(Long id) {
+        POI poi = poiRepository.findById(id).orElseThrow(ResourceNotFoundException::new);
         return poi.getComments().stream()
                 .map(commentMapper::commentToCommentDTO)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<CommentDTO> findAllByProfile(Profile profile) {
-
+    public List<CommentDTO> findAllByProfile(Long id) {
+        Profile profile = profileRepository.findById(id).orElseThrow(ResourceNotFoundException::new);
         return profile.getReceivedComments().stream()
                 .map(commentMapper::commentToCommentDTO)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<CommentDTO> findAllByPoster(Profile profile) {
-
+    public List<CommentDTO> findAllByPoster(Long id) {
+        Profile profile = profileRepository.findById(id).orElseThrow(ResourceNotFoundException::new);
         return profile.getPostedComments().stream()
+                .map(commentMapper::commentToCommentDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<CommentDTO> findAll() {
+        return commentRepository.findAll().stream()
                 .map(commentMapper::commentToCommentDTO)
                 .collect(Collectors.toList());
     }
@@ -61,6 +73,10 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public CommentDTO save(CommentDTO commentDTO) {
+        if(commentDTO == null || commentDTO.getPOIId() == null || commentDTO.getProfileId() == null){
+            throw new InvalidParameterException("Both categories and original posters are required for POI creation");
+        }
+
         Profile poster = profileRepository.findById(commentDTO.getPosterId()).orElseThrow(ResourceNotFoundException::new);
         POI poi = null;
         Profile profile = null;

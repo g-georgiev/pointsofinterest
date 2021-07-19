@@ -12,23 +12,26 @@ import world.pointsofinterest.repositories.ProfileRepository;
 import world.pointsofinterest.services.interfaces.ImageService;
 
 import java.io.IOException;
+import java.security.InvalidParameterException;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 public class ImageServiceImpl implements ImageService {
     private final ImageRepository imageRepository;
-    private final ImageMapper imageMapper;
     private final ProfileRepository profileRepository;
     private final POIRepository poiRepository;
 
-    public ImageServiceImpl(ImageRepository imageRepository, ImageMapper imageMapper,
-                            ProfileRepository profileRepository, POIRepository poiRepository) {
-        this.imageRepository = imageRepository;
-        this.imageMapper = imageMapper;
-        this.profileRepository = profileRepository;
+    private final ImageMapper imageMapper;
 
+    public ImageServiceImpl(ImageRepository imageRepository,
+                            ProfileRepository profileRepository,
+                            POIRepository poiRepository,
+                            ImageMapper imageMapper) {
+        this.imageRepository = imageRepository;
+        this.profileRepository = profileRepository;
         this.poiRepository = poiRepository;
+        this.imageMapper = imageMapper;
     }
 
     @Override
@@ -46,14 +49,16 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
-    public List<ImageDTO> findAllByPOI(POI poi) {
+    public List<ImageDTO> findAllByPOI(Long id) {
+        POI poi = poiRepository.findById(id).orElseThrow(ResourceNotFoundException::new);
         return poi.getImageSet().stream()
                 .map(imageMapper::imageToImageDTO)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<ImageDTO> findAllByProfile(Profile profile) {
+    public List<ImageDTO> findAllByProfile(Long id) {
+        Profile profile = profileRepository.findById(id).orElseThrow(ResourceNotFoundException::new);
         return profile.getImageSet().stream()
                 .map(imageMapper::imageToImageDTO)
                 .collect(Collectors.toList());
@@ -61,6 +66,8 @@ public class ImageServiceImpl implements ImageService {
 
     @Override
     public ImageDTO save(ImageDTO imageDTO) {
+        if(imageDTO == null) { throw new InvalidParameterException("Image DTO must be not null"); }
+
         POI poi = null;
         Profile profile = null;
         if(imageDTO.getPoiId() != null) {
@@ -76,6 +83,11 @@ public class ImageServiceImpl implements ImageService {
 
     @Override
     public ImageDTO update(Long id, ImageDTO imageDTO) {
+        if(id == null) {throw new InvalidParameterException("ID of image to update is required");}
+        if(imageDTO == null || imageDTO.getDescription() == null && imageDTO.getRating() == null &&
+        imageDTO.getProfileId() == null && imageDTO.getPoiId() == null){
+            throw new InvalidParameterException("Either description, rating POI id or profile id must be passed to update");
+        }
         return imageRepository.findById(id).map(image -> {
             if(imageDTO.getRating() != null){
                 image.addRating(imageDTO.getRating());

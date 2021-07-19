@@ -1,15 +1,33 @@
 package world.pointsofinterest.api.v1.model;
 
+import org.hibernate.validator.constraints.Range;
+
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 import java.util.List;
 import java.util.Set;
 
 public class ProfileDTO {
+    @Positive(message = "ID must be positive")
     private Long id;
+
+    @NotNull(message = "Username is a required property")
+    @NotEmpty(message = "Username cannot be an empty string")
     private String username;
+
     private Boolean banned;
+
+    @NotNull(message = "Description is a required property")
+    @NotEmpty(message = "Description cannot be an empty string")
     private String description;
+
+    @NotNull(message = "Rating is a required property")
+    @Range(min = 0, max = 10, message = "Rating must be between 0 and 10")
     private Double rating;
+
     private Set<ImageDTO> images;
+
     private List<CommentDTO> receivedComments;
 
     public ProfileDTO(Long id, String username, Boolean banned, String description, Double rating, Set<ImageDTO> images, List<CommentDTO> receivedComments) {

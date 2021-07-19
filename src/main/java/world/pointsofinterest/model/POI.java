@@ -3,6 +3,7 @@ package world.pointsofinterest.model;
 import world.pointsofinterest.model.superclasses.Post;
 
 import javax.persistence.*;
+import java.security.InvalidParameterException;
 import java.util.*;
 
 @Entity
@@ -35,7 +36,7 @@ public class POI extends Post {
 //    private Set<Profile> profiles;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "poi")
-    private Set<ProfilePOI> profilePOIS;
+    private Set<ProfilePOI> profilePOIS = new HashSet<>();
 
     @Column(name = "is_approved", nullable = false)
     private Boolean isApproved = false;
@@ -46,6 +47,8 @@ public class POI extends Post {
     public POI(Long id, String description, Double rating, Double latitude, Double longitude,
                Set<Category> categories, Set<ProfilePOI> profilePOIS) {
         super(id, description, rating);
+
+        validateCoordinates(latitude, longitude);
         this.latitude = latitude;
         this.longitude = longitude;
         this.categories = categories;
@@ -57,6 +60,7 @@ public class POI extends Post {
     }
 
     public void setLatitude(Double latitude) {
+        validateCoordinates(latitude, null);
         this.latitude = latitude;
     }
 
@@ -65,6 +69,7 @@ public class POI extends Post {
     }
 
     public void setLongitude(Double longitude) {
+        validateCoordinates(null, longitude);
         this.longitude = longitude;
     }
 
@@ -112,7 +117,7 @@ public class POI extends Post {
         this.profilePOIS.add(profilePOI);
     }
 
-    public Set<Profile> getProfilePOIs(Boolean checkIn) {
+    public Set<Profile> getProfiles(Boolean checkIn) {
         Objects.requireNonNull(checkIn);
         Set<Profile> profiles = new HashSet<>();
 
@@ -149,5 +154,15 @@ public class POI extends Post {
 
     public void setApproved(Boolean approved) {
         isApproved = approved;
+    }
+
+    public static void validateCoordinates(Double latitude, Double longitude){
+        if(latitude != null && (latitude < -90 || latitude > 90)) {
+            throw new InvalidParameterException("Latitude must be between -90 and 90 degrees");
+        }
+
+        if(longitude!= null && (longitude < -180 || longitude > 180)) {
+            throw new InvalidParameterException("Longitude must be between -90 and 90 degrees");
+        }
     }
 }

@@ -8,9 +8,12 @@ import world.pointsofinterest.api.v1.model.CommentDTO;
 import world.pointsofinterest.api.v1.model.ImageDTO;
 import world.pointsofinterest.api.v1.model.ProfileDTO;
 import world.pointsofinterest.api.v1.model.POIResponseDTO;
+import world.pointsofinterest.services.interfaces.CommentService;
+import world.pointsofinterest.services.interfaces.ImageService;
 import world.pointsofinterest.services.interfaces.POIService;
 import world.pointsofinterest.services.interfaces.UserProfileService;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -25,10 +28,14 @@ public class UserProfileController {
 
     private final UserProfileService userProfileService;
     private final POIService poiService;
+    private final ImageService imageService;
+    private final CommentService commentService;
 
-    public UserProfileController(UserProfileService userProfileService, POIService poiService) {
+    public UserProfileController(UserProfileService userProfileService, POIService poiService, ImageService imageService, CommentService commentService) {
         this.userProfileService = userProfileService;
         this.poiService = poiService;
+        this.imageService = imageService;
+        this.commentService = commentService;
     }
 
     @GetMapping
@@ -71,7 +78,7 @@ public class UserProfileController {
     public List<CommentDTO> getPostedComments(
             @Parameter(description = "The id of the user, whose posted comments to fetch", required = true)
             @PathVariable Long id){
-        return userProfileService.findAllPostedComments(id);
+        return commentService.findAllByPoster(id);
     }
 
     @GetMapping({"/{id}" + RECEIVED_COMMENT_PATH})
@@ -80,7 +87,7 @@ public class UserProfileController {
     public List<CommentDTO> getReceivedComments(
             @Parameter(description = "The id of the user, whose received comments to fetch", required = true)
             @PathVariable Long id){
-        return userProfileService.findAllReceivedComments(id);
+        return commentService.findAllByProfile(id);
     }
 
     @GetMapping({"/{id}" + IMAGE_PATH})
@@ -89,7 +96,7 @@ public class UserProfileController {
     public List<ImageDTO> getProfileImages(
             @Parameter(description = "The id of the user, whose profile images to fetch", required = true)
             @PathVariable Long id){
-        return userProfileService.findAllImages(id);
+        return imageService.findAllByProfile(id);
     }
 
     @PostMapping
@@ -97,30 +104,9 @@ public class UserProfileController {
     @Operation(summary = "Create a new user profile")
     public ProfileDTO createNewProfile(
             @Parameter(description = "Data for the new user profile", required = true)
+            @Valid
             @RequestBody ProfileDTO ProfileDTO){
         return userProfileService.save(ProfileDTO);
-    }
-
-    @PostMapping({"/{id}" + RECEIVED_COMMENT_PATH})
-    @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Post a comment for a user profile")
-    public CommentDTO addCommentForProfile(
-            @Parameter(description = "The id of the user profile", required = true)
-            @PathVariable Long id,
-            @Parameter(description = "The data of the comment to be posted", required = true)
-            @RequestBody CommentDTO commentDTO){
-        return userProfileService.addComment(id, commentDTO);
-    }
-
-    @PostMapping({"/{id}" + IMAGE_PATH})
-    @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Add an image for a user profile")
-    public ImageDTO addImageForProfile(
-            @Parameter(description = "The id of the user profile", required = true)
-            @PathVariable Long id,
-            @Parameter(description = "The image to be added", required = true)
-            @RequestBody ImageDTO imageDTO){
-        return userProfileService.addImage(id, imageDTO);
     }
 
     @PutMapping({"/{id}"})
@@ -130,6 +116,7 @@ public class UserProfileController {
             @Parameter(description = "The id of the user profile to update", required = true)
             @PathVariable Long id,
             @Parameter(description = "New data for the user profile to update", required = true)
+            @Valid
             @RequestBody ProfileDTO ProfileDTO){
         return userProfileService.update(id, ProfileDTO);
     }

@@ -1,10 +1,19 @@
 package world.pointsofinterest.api.v1.model;
 
-import java.util.Map;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 
 public class CategoryDTO {
+    @Positive(message = "ID must be positive")
     private Long id;
+
+    @NotNull(message = "Name is a required property")
+    @NotEmpty(message = "Name cannot be an empty string")
     private String name;
+
+    @NotNull(message = "Description is a required property")
+    @NotEmpty(message = "Description cannot be an empty string")
     private String description;
 
     public CategoryDTO(Long id, String name, String description) {

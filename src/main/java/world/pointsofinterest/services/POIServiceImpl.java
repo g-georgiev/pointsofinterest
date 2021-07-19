@@ -4,21 +4,19 @@ import com.javadocmd.simplelatlng.LatLng;
 import com.javadocmd.simplelatlng.LatLngTool;
 import com.javadocmd.simplelatlng.util.LengthUnit;
 import org.springframework.stereotype.Service;
-import world.pointsofinterest.api.v1.mappers.CommentMapper;
 import world.pointsofinterest.api.v1.mappers.POIMapper;
-import world.pointsofinterest.api.v1.model.CommentDTO;
-import world.pointsofinterest.api.v1.model.ImageDTO;
 import world.pointsofinterest.api.v1.model.POIRequestDTO;
 import world.pointsofinterest.api.v1.model.POIResponseDTO;
 import world.pointsofinterest.model.Category;
 import world.pointsofinterest.model.POI;
 import world.pointsofinterest.model.Profile;
 import world.pointsofinterest.model.ProfilePOI;
-import world.pointsofinterest.repositories.*;
-import world.pointsofinterest.services.interfaces.CommentService;
-import world.pointsofinterest.services.interfaces.ImageService;
+import world.pointsofinterest.repositories.CategoryRepository;
+import world.pointsofinterest.repositories.POIRepository;
+import world.pointsofinterest.repositories.ProfileRepository;
 import world.pointsofinterest.services.interfaces.POIService;
 
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -29,32 +27,19 @@ import java.util.stream.Collectors;
 public class POIServiceImpl implements POIService {
 
     private final POIRepository poiRepository;
-    private final ProfilePOIRepository profilePOIRepository;
     private final CategoryRepository categoryRepository;
-    private final ImageRepository imageRepository;
-    private final VideoRepository videoRepository;
     private final ProfileRepository profileRepository;
 
     private final POIMapper poiMapper;
-    private final CommentMapper commentMapper;
 
-    private final CommentService commentService;
-    private final ImageService imageService;
-
-    public POIServiceImpl(POIRepository poiRepository, ProfilePOIRepository profilePOIRepository, CategoryRepository categoryRepository,
-                          ImageRepository imageRepository, VideoRepository videoRepository,
-                          ProfileRepository profileRepository, POIMapper poiMapper,
-                          CommentMapper commentMapper, CommentService commentService, ImageService imageService) {
+    public POIServiceImpl(POIRepository poiRepository,
+                          CategoryRepository categoryRepository,
+                          ProfileRepository profileRepository,
+                          POIMapper poiMapper) {
         this.poiRepository = poiRepository;
-        this.profilePOIRepository = profilePOIRepository;
         this.categoryRepository = categoryRepository;
-        this.imageRepository = imageRepository;
-        this.videoRepository = videoRepository;
         this.profileRepository = profileRepository;
         this.poiMapper = poiMapper;
-        this.commentMapper = commentMapper;
-        this.commentService = commentService;
-        this.imageService = imageService;
     }
 
     @Override
@@ -92,6 +77,8 @@ public class POIServiceImpl implements POIService {
 
     @Override
     public List<POIResponseDTO> findAllByRange(Double currentLat, Double currentLon, Double rangeInKm){
+        POI.validateCoordinates(currentLat, currentLon);
+
         LatLng currentPoint = new LatLng(currentLat, currentLon);
         List<POIResponseDTO> foundPOIs = new ArrayList<>();
 
@@ -108,38 +95,15 @@ public class POIServiceImpl implements POIService {
 
         //Fine filtration using Geo distance calculation lib
         for(POI poi : POIs){
-            if(rangeInKm >= LatLngTool.distance(currentPoint,
+            double distance = LatLngTool.distance(currentPoint,
                     new LatLng(poi.getLatitude(), poi.getLongitude()),
-                    LengthUnit.KILOMETER)){
+                    LengthUnit.KILOMETER);
+            if(rangeInKm >= distance){
                 foundPOIs.add(poiMapper.POIToPOIDTO(poi));
             }
         }
 
         return foundPOIs;
-    }
-
-    @Override
-    public List<CommentDTO> findAllComments(Long id) {
-        POI poi = poiRepository.findById(id).orElseThrow(ResourceNotFoundException::new);
-        return commentService.findAllByPOI(poi);
-    }
-
-    @Override
-    public CommentDTO addComment(Long id, CommentDTO commentDTO) {
-        commentDTO.setPOIId(id);
-        return commentService.save(commentDTO);
-    }
-
-    @Override
-    public List<ImageDTO> findAllImages(Long id) {
-        POI poi = poiRepository.findById(id).orElseThrow(ResourceNotFoundException::new);
-        return imageService.findAllByPOI(poi);
-    }
-
-    @Override
-    public ImageDTO addImage(Long id, ImageDTO imageDTO) {
-        imageDTO.setPoiId(id);
-        return imageService.save(imageDTO);
     }
 
     @Override
@@ -153,16 +117,26 @@ public class POIServiceImpl implements POIService {
 
     @Override
     public POIResponseDTO save(POIRequestDTO poiRequestDTO) {
-        Set<Category> categories = new HashSet<>(categoryRepository.findByIdIn(poiRequestDTO.getCategories()));
-        Set<ProfilePOI> profilePOIS = new HashSet<>(
-                profilePOIRepository.findByProfileIdIn(poiRequestDTO.getPosters()));
+        if(poiRequestDTO == null || poiRequestDTO.getCategories() == null || poiRequestDTO.getPosters() == null){
+            throw new InvalidParameterException("Both categories and original posters are required for POI creation");
+        }
 
-        return poiMapper.POIToPOIDTO(poiRepository.save(
-                poiMapper.POIDTOToPOI(poiRequestDTO, categories, profilePOIS)));
+        Set<Category> categories = new HashSet<>(categoryRepository.findByIdIn(poiRequestDTO.getCategories()));
+        Set<ProfilePOI> profilePOIS = profileRepository.findByIdIn(poiRequestDTO.getPosters()).stream()
+                .map(profile -> new ProfilePOI(null, profile, false))
+                .collect(Collectors.toSet());
+        POI newPOI = poiMapper.POIDTOToPOI(poiRequestDTO, categories, profilePOIS);
+        newPOI.getProfilePOIS().forEach(profilePOI -> profilePOI.setPoi(newPOI));
+
+        return poiMapper.POIToPOIDTO(poiRepository.save(newPOI));
     }
 
     @Override
     public POIResponseDTO update(Long id, POIRequestDTO poiRequestDTO) {
+        if(id == null) {throw new InvalidParameterException("ID of POI to update is required");}
+        if(poiRequestDTO == null || poiRequestDTO.getDescription() == null && poiRequestDTO.getRating() == null){
+            throw new InvalidParameterException("Either description or rating must be passed to update");
+        }
 
         return poiRepository.findById(id).map(poi -> {
             if(poiRequestDTO.getDescription() != null){

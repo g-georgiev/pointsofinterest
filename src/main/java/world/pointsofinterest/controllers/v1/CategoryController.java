@@ -14,6 +14,7 @@ import world.pointsofinterest.services.POIServiceImpl;
 import world.pointsofinterest.services.interfaces.CategoryService;
 import world.pointsofinterest.services.interfaces.POIService;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -60,6 +61,7 @@ public class CategoryController {
     @Operation(summary = "Create a new category")
     public CategoryDTO createNewCategory(
             @Parameter(description = "Data for the new category", required = true)
+            @Valid
             @RequestBody CategoryDTO categoryDTO){
         return categoryService.save(categoryDTO);
     }
@@ -71,6 +73,7 @@ public class CategoryController {
             @Parameter(description = "The id of the category to update", required = true)
             @PathVariable Long id,
             @Parameter(description = "New data for the category to update", required = true)
+            @Valid
             @RequestBody CategoryDTO categoryDTO){
         return categoryService.update(id, categoryDTO);
     }

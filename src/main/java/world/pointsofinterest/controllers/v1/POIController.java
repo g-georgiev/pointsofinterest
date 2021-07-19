@@ -4,14 +4,17 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import world.pointsofinterest.api.v1.model.CommentDTO;
 import world.pointsofinterest.api.v1.model.ImageDTO;
 import world.pointsofinterest.api.v1.model.POIRequestDTO;
 import world.pointsofinterest.api.v1.model.POIResponseDTO;
+import world.pointsofinterest.services.interfaces.CommentService;
+import world.pointsofinterest.services.interfaces.CommonService;
+import world.pointsofinterest.services.interfaces.ImageService;
 import world.pointsofinterest.services.interfaces.POIService;
 
-import java.io.IOException;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @RestController
@@ -23,9 +26,13 @@ public class POIController {
     public static final String POI_COMMENT_PATH = "/comments";
 
     private final POIService poiService;
+    private final ImageService imageService;
+    private final CommentService commentService;
 
-    public POIController(POIService poiService) {
+    public POIController(POIService poiService, ImageService imageService, CommentService commentService) {
         this.poiService = poiService;
+        this.imageService = imageService;
+        this.commentService = commentService;
     }
 
     @GetMapping
@@ -64,44 +71,23 @@ public class POIController {
     @Operation(summary = "Get a list of all the comments for a given point of interest")
     public List<CommentDTO> getAllCommentsForPOI(
             @Parameter(description = "The id of the point of interest whose comments to fetch", required = true)
-            @PathVariable Long id){ return poiService.findAllComments(id); }
+            @PathVariable Long id){ return commentService.findAllByPOI(id); }
 
     @GetMapping({"/{id}" + POI_IMAGE_PATH})
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get a list of all the images for a given point of interest")
     public List<ImageDTO> getAllImagesForPOI(
             @Parameter(description = "The id of the point of interest whose images to fetch", required = true)
-            @PathVariable Long id){ return poiService.findAllImages(id); }
+            @PathVariable Long id){ return imageService.findAllByPOI(id); }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Create a new point of interest")
     public POIResponseDTO createNewPOI(
             @Parameter(description = "Data for the new point of interest", required = true)
+            @Valid
             @RequestBody POIRequestDTO poiDTO){
         return poiService.save(poiDTO);
-    }
-
-    @PostMapping({"/{id}" + POI_COMMENT_PATH})
-    @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Post a comment for a point of interest")
-    public CommentDTO addCommentForPOI(
-            @Parameter(description = "The id of the point of interest", required = true)
-            @PathVariable Long id,
-            @Parameter(description = "The data of the comment to be posted", required = true)
-            @RequestBody CommentDTO commentDTO){
-        return poiService.addComment(id, commentDTO);
-    }
-
-    @PostMapping({"/{id}" + POI_IMAGE_PATH})
-    @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Add an image for a point of interest")
-    public ImageDTO addImageForPOI(
-            @Parameter(description = "The id of the point of interest", required = true)
-            @PathVariable Long id,
-            @Parameter(description = "The image to be added", required = true)
-            @RequestBody ImageDTO imageDTO) throws IOException {
-        return poiService.addImage(id, imageDTO);
     }
 
     @PutMapping({"/{id}"})
@@ -111,6 +97,7 @@ public class POIController {
             @Parameter(description = "The id of the point of interest to update", required = true)
             @PathVariable Long id,
             @Parameter(description = "New data for the point of interest to update", required = true)
+            @Valid
             @RequestBody POIRequestDTO poiDTO){
         return poiService.update(id, poiDTO);
     }
@@ -122,6 +109,8 @@ public class POIController {
             @Parameter(description = "The id of the point of interest to check into", required = true)
             @PathVariable Long id,
             @Parameter(description = "The user profile that checked in", required = true)
+            @Valid
+            @NotNull
             @RequestParam(name = "profile_id") Long profile_id){
         return poiService.checkIn(id, profile_id);
     }
