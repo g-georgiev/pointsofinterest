@@ -68,6 +68,7 @@ public class ImageServiceImpl implements ImageService {
     public ImageDTO save(ImageDTO imageDTO) {
         if(imageDTO == null) { throw new InvalidParameterException("Image DTO must be not null"); }
 
+
         POI poi = null;
         Profile profile = null;
         if(imageDTO.getPoiId() != null) {
@@ -88,6 +89,7 @@ public class ImageServiceImpl implements ImageService {
         imageDTO.getProfileId() == null && imageDTO.getPoiId() == null){
             throw new InvalidParameterException("Either description, rating POI id or profile id must be passed to update");
         }
+
         return imageRepository.findById(id).map(image -> {
             if(imageDTO.getRating() != null){
                 image.addRating(imageDTO.getRating());

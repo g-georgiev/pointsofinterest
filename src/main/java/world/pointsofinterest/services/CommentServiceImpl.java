@@ -73,8 +73,12 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public CommentDTO save(CommentDTO commentDTO) {
-        if(commentDTO == null || commentDTO.getPOIId() == null || commentDTO.getProfileId() == null){
-            throw new InvalidParameterException("Both categories and original posters are required for POI creation");
+        if(commentDTO == null){
+            throw new InvalidParameterException("Comment DTO is required");
+        }
+        if(commentDTO.getPOIId() != null && commentDTO.getProfileId() != null ||
+                commentDTO.getPOIId() == null && commentDTO.getProfileId() == null){
+            throw new InvalidParameterException("Either POI id or profile id is required, but not both");
         }
 
         Profile poster = profileRepository.findById(commentDTO.getPosterId()).orElseThrow(ResourceNotFoundException::new);
@@ -93,6 +97,11 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public CommentDTO update(Long id, CommentDTO commentDTO) {
+        if(id == null) {throw new InvalidParameterException("ID of comment to update is required");}
+        if(commentDTO == null || commentDTO.getComment() == null){
+            throw new InvalidParameterException("Comment text to update is required");
+        }
+
         return commentRepository.findById(id).map(comment -> {
             if(commentDTO.getComment() != null){
                 comment.setComment(commentDTO.getComment());
