@@ -4,6 +4,7 @@ import org.hibernate.validator.constraints.Range;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Positive;
 import java.util.List;
 import java.util.Set;
@@ -15,6 +16,15 @@ public class ProfileDTO {
     @NotNull(message = "Username is a required property")
     @NotEmpty(message = "Username cannot be an empty string")
     private String username;
+
+    @NotNull(message = "Password is a required property")
+    @NotEmpty(message = "Password cannot be an empty string")
+    private String password;
+
+    @NotNull(message = "User authorities are a required property")
+    private Set<@Pattern(regexp = "USER|MODERATOR|ADMIN",
+                         message = "User authority accepted values are USER, MODERATOR or ADMIN")
+                String> authorities;
 
     private Boolean banned;
 
@@ -30,9 +40,11 @@ public class ProfileDTO {
 
     private List<CommentDTO> receivedComments;
 
-    public ProfileDTO(Long id, String username, Boolean banned, String description, Double rating, Set<ImageDTO> images, List<CommentDTO> receivedComments) {
+    public ProfileDTO(Long id, String username, String password, Set<String> authorities, Boolean banned, String description, Double rating, Set<ImageDTO> images, List<CommentDTO> receivedComments) {
         this.id = id;
         this.username = username;
+        this.password = password;
+        this.authorities = authorities;
         this.banned = banned;
         this.description = description;
         this.rating = rating;
@@ -54,6 +66,22 @@ public class ProfileDTO {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public Set<String> getAuthorities() {
+        return authorities;
+    }
+
+    public void setAuthorities(Set<String> authorities) {
+        this.authorities = authorities;
     }
 
     public Boolean getBanned() {

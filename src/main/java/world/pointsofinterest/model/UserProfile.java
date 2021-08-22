@@ -1,5 +1,6 @@
 package world.pointsofinterest.model;
 
+import org.springframework.security.core.userdetails.UserDetails;
 import world.pointsofinterest.model.superclasses.Post;
 
 import javax.persistence.*;
@@ -7,36 +8,49 @@ import java.util.*;
 
 @Entity
 @Table(name = "profiles")
-public class Profile extends Post {
+public class UserProfile extends Post implements UserDetails {
+
+    @Column(name = "username", nullable = false, unique = true)
+    private String username;
+
+    @Column(name = "password")
+    private String password;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "users_roles", joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<Role> roles;
 
     @Column(name = "banned", nullable = false)
     private Boolean banned = false;
 
-    @JoinColumn(name = "user_id", nullable = false)
-    @OneToOne(cascade = CascadeType.ALL)
-    private User user;
-
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "poster")
     private List<Comment> postedComments = new ArrayList<>();
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "profile")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "userProfile")
     private List<Comment> receivedComments = new ArrayList<>();
 
-//    @ManyToMany(mappedBy = "profiles")
-//    private Set<POI> postedPOIs = new HashSet<>();
-
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "profile")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "userProfile")
     private Set<ProfilePOI> profilePOIS = new HashSet<>();
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "profile")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "userProfile")
     private Set<Image> imageSet = new HashSet<>();
 
-    public Profile() {
+    public UserProfile() {
     }
 
-    public Profile(Long id, String description, Double rating, User user) {
+    public UserProfile(Long id,
+                       String description,
+                       Double rating,
+                       String username,
+                       String password,
+                       Set<Role> roles,
+                       Boolean banned) {
         super(id, description, rating);
-        this.user = user;
+        this.username = username;
+        this.password = password;
+        this.roles = roles;
+        this.banned = banned;
     }
 
     public Boolean getBanned() {
@@ -45,10 +59,6 @@ public class Profile extends Post {
 
     public void setBanned(Boolean banned) {
         this.banned = banned;
-    }
-
-    public User getUser() {
-        return user;
     }
 
     public List<Comment> getReceivedComments() {
@@ -75,10 +85,6 @@ public class Profile extends Post {
         this.postedComments = postedComments;
     }
 
-    public void setUser(User user) {
-        this.user = user;
-    }
-
     public void setReceivedComments(List<Comment> receivedComments) {
         this.receivedComments = receivedComments;
     }
@@ -87,15 +93,11 @@ public class Profile extends Post {
         receivedComments.add(comment);
     }
 
-    public String getUsername() {
-        return user.getUsername();
-    }
-
     @Override
     public String toString() {
         return "Profile{" +
                 "banned=" + banned +
-                ", user=" + user +
+                ", username=" + username +
                 '}';
     }
 
@@ -112,5 +114,53 @@ public class Profile extends Post {
 
     public void addProfilePOI(ProfilePOI profilePOI) {
         this.profilePOIS.add(profilePOI);
+    }
+
+
+
+    @Override
+    public Set<Role> getAuthorities() {
+        return roles;
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return !banned;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return !banned;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
     }
 }

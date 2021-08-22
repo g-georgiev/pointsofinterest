@@ -108,7 +108,7 @@ public class POIController {
     public POIResponseDTO checkInPOI(
             @Parameter(description = "The id of the point of interest to check into", required = true)
             @PathVariable Long id,
-            @Parameter(description = "The user profile that checked in", required = true)
+            @Parameter(description = "The user userProfile that checked in", required = true)
             @Valid
             @NotNull
             @RequestParam(name = "profile_id") Long profile_id){

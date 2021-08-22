@@ -4,7 +4,7 @@ import org.springframework.stereotype.Component;
 import world.pointsofinterest.api.v1.model.CommentDTO;
 import world.pointsofinterest.model.Comment;
 import world.pointsofinterest.model.POI;
-import world.pointsofinterest.model.Profile;
+import world.pointsofinterest.model.UserProfile;
 
 @Component
 public class CommentMapper {
@@ -18,7 +18,7 @@ public class CommentMapper {
                 comment.getPoster().getId(), POIId, profileId);
     }
 
-    public Comment commentDTOToComment(CommentDTO commentDTO, Profile poster, POI poi, Profile profile){
-        return new Comment(commentDTO.getId(), commentDTO.getComment(), poster, poi, profile);
+    public Comment commentDTOToComment(CommentDTO commentDTO, UserProfile poster, POI poi, UserProfile userProfile){
+        return new Comment(commentDTO.getId(), commentDTO.getComment(), poster, poi, userProfile);
     }
 }

@@ -11,7 +11,7 @@ import world.pointsofinterest.api.v1.model.POIResponseDTO;
 import world.pointsofinterest.model.*;
 import world.pointsofinterest.repositories.CategoryRepository;
 import world.pointsofinterest.repositories.POIRepository;
-import world.pointsofinterest.repositories.ProfileRepository;
+import world.pointsofinterest.repositories.UserProfileRepository;
 import world.pointsofinterest.services.interfaces.POIService;
 
 import java.security.InvalidParameterException;
@@ -31,14 +31,14 @@ class POIServiceImplTest {
     @Mock
     private CategoryRepository categoryRepository;
     @Mock
-    private ProfileRepository profileRepository;
+    private UserProfileRepository userProfileRepository;
 
     private POIService poiService;
 
     //Testing data
     private Category testCategory1;
-    private Profile testProfile1;
-    private Profile testProfile2;
+    private UserProfile testUserProfile1;
+    private UserProfile testUserProfile2;
     private final List<POI> testPOIList = new ArrayList<>();
 
     @BeforeEach
@@ -46,7 +46,7 @@ class POIServiceImplTest {
         //Set up services
         poiService = new POIServiceImpl(poiRepository,
                 categoryRepository,
-                profileRepository,
+                userProfileRepository,
                 new POIMapper(new CommentMapper(), new ProfileMapper(new CommentMapper(), new ImageMapper()),
                         new CategoryMapper(), new ImageMapper()));
 
@@ -54,23 +54,17 @@ class POIServiceImplTest {
         testCategory1 = new Category(1L, "Sites", "Sites");
 
         //Set up user profiles
-        User user = new User();
-        testProfile1 = new Profile(1L, "Test profile 1", 10.0, user);
-        user.setId(1L);
-        user.setUsername("test_user1");
-        user.setProfile(testProfile1);
+        testUserProfile1 = new UserProfile(1L, "Test userProfile 1", 10.0,
+                "test_user1", "1234", null, false );
 
-        user = new User();
-        testProfile2 = new Profile(2L, "Test profile 2", 8.8, user);
-        user.setId(2L);
-        user.setUsername("test_user2");
-        user.setProfile(testProfile2);
+        testUserProfile2 = new UserProfile(2L, "Test userProfile 2", 8.8,
+                "test_user2", "1234", null, false );
 
         //Set up POIs
         for (long i = 1; i < 4; i++) {
             ProfilePOI profilePOI = new ProfilePOI();
             profilePOI.setId(i);
-            profilePOI.setProfile(testProfile1);
+            profilePOI.setProfile(testUserProfile1);
             Set<Category> categories = new HashSet<>();
             categories.add(testCategory1);
             Set<ProfilePOI> profilePOIS = new HashSet<>();
@@ -80,7 +74,7 @@ class POIServiceImplTest {
                     categories, profilePOIS);
             profilePOI.setPoi(poi);
 
-            testProfile1.addProfilePOI(profilePOI);
+            testUserProfile1.addProfilePOI(profilePOI);
             testPOIList.add(poi);
             testCategory1.addPOI(poi);
         }
@@ -123,7 +117,7 @@ class POIServiceImplTest {
 
     @Test
     void findAllPOIsByProfile() {
-        when(profileRepository.findById(1L)).thenReturn(Optional.of(testProfile1));
+        when(userProfileRepository.findById(1L)).thenReturn(Optional.of(testUserProfile1));
 
         List<POIResponseDTO> allPOIs = poiService.findAllPOIsByProfile(1L, false);
 
@@ -166,7 +160,7 @@ class POIServiceImplTest {
     void checkIn() {
         when(poiRepository.findById(1L)).thenReturn(Optional.of(testPOIList.get(0)));
         when(poiRepository.save(any(POI.class))).thenReturn(testPOIList.get(0));
-        when(profileRepository.findById(2L)).thenReturn(Optional.of(testProfile2));
+        when(userProfileRepository.findById(2L)).thenReturn(Optional.of(testUserProfile2));
 
         POIResponseDTO poiResponseDTO = poiService.checkIn(1L, 2L);
 
@@ -178,7 +172,7 @@ class POIServiceImplTest {
     void save() {
         when(poiRepository.save(any(POI.class))).thenAnswer(ans -> ans.getArguments()[0]);
         when(categoryRepository.findByIdIn(List.of(1L))).thenReturn(List.of(testCategory1));
-        when(profileRepository.findByIdIn(List.of(1L, 2L))).thenReturn(List.of(testProfile1, testProfile2));
+        when(userProfileRepository.findByIdIn(List.of(1L, 2L))).thenReturn(List.of(testUserProfile1, testUserProfile2));
 
         POIRequestDTO poiRequestDTO = new POIRequestDTO(
                 null, 30.34, 160.65, "test POI", 10D, List.of(1L), List.of(1L, 2L)

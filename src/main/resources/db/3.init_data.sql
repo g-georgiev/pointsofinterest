@@ -8,3 +8,5 @@ values  ('View', 'A random place with a beautiful view. Suitable for relaxing an
         ('Easily accessible', 'A place suitable for children, handicapped or older people.'),
         ('Hard to reach', 'A place that requires some effort to reach and may not be suitable for everyone');
 
+--Init Roles:
+insert into roles (authority) values ('USER'), ('MODERATOR'), ('ADMIN');

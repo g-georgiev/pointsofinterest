@@ -5,18 +5,22 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import world.pointsofinterest.api.v1.mappers.CommentMapper;
 import world.pointsofinterest.api.v1.mappers.ImageMapper;
 import world.pointsofinterest.api.v1.mappers.ProfileMapper;
 import world.pointsofinterest.api.v1.model.ProfileDTO;
-import world.pointsofinterest.model.Profile;
-import world.pointsofinterest.model.User;
-import world.pointsofinterest.repositories.ProfileRepository;
+import world.pointsofinterest.model.Authority;
+import world.pointsofinterest.model.Role;
+import world.pointsofinterest.model.UserProfile;
+import world.pointsofinterest.repositories.RoleRepository;
+import world.pointsofinterest.repositories.UserProfileRepository;
 import world.pointsofinterest.services.interfaces.UserProfileService;
 
 import java.security.InvalidParameterException;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -27,30 +31,36 @@ import static org.mockito.Mockito.when;
 class UserProfileServiceImplTest {
 
     @Mock
-    private ProfileRepository profileRepository;
+    private UserProfileRepository userProfileRepository;
+
+    @Mock
+    private RoleRepository roleRepository;
 
     private UserProfileService userProfileService;
 
     //Test data
-    private Profile testProfile1;
+    private UserProfile testUserProfile1;
+    private Role testRole;
 
     @BeforeEach
     void setUp() {
-        userProfileService = new UserProfileServiceImpl(profileRepository, new ProfileMapper(
+        userProfileService = new UserProfileServiceImpl(userProfileRepository, roleRepository, new ProfileMapper(
                 new CommentMapper(), new ImageMapper()
         ));
+        userProfileService.setPasswordEncoder(new BCryptPasswordEncoder());
 
         //Set up user profiles
-        User user = new User();
-        testProfile1 = new Profile(1L, "Test profile 1", 10.0, user);
-        user.setId(1L);
-        user.setUsername("test_user1");
-        user.setProfile(testProfile1);
+        testUserProfile1 = new UserProfile(1L, "Test userProfile 1", 10.0,
+                "test_user1", "1234", null, false );
+        testRole = new Role();
+        testRole.setAuthority(Authority.USER);
+        testRole.setUserProfiles(Set.of(testUserProfile1));
+        testUserProfile1.setRoles(Set.of(testRole));
     }
 
     @Test
     void findAll() {
-        when(profileRepository.findAll()).thenReturn(List.of(testProfile1, testProfile1));
+        when(userProfileRepository.findAll()).thenReturn(List.of(testUserProfile1, testUserProfile1));
 
         List<ProfileDTO> profileDTOS = userProfileService.findAll();
 
@@ -60,7 +70,7 @@ class UserProfileServiceImplTest {
 
     @Test
     void findById() {
-        when(profileRepository.findById(1L)).thenReturn(Optional.of(testProfile1));
+        when(userProfileRepository.findById(1L)).thenReturn(Optional.of(testUserProfile1));
 
         ProfileDTO profileDTO = userProfileService.findById(1L);
 
@@ -72,14 +82,15 @@ class UserProfileServiceImplTest {
 
     @Test
     void save() {
-        when(profileRepository.save(any(Profile.class))).thenAnswer(ans -> ans.getArguments()[0]);
+        when(userProfileRepository.save(any(UserProfile.class))).thenAnswer(ans -> ans.getArguments()[0]);
+        when(roleRepository.findByAuthorityIn(List.of(Authority.USER))).thenReturn(List.of(testRole));
 
-        ProfileDTO profileDTO = new ProfileDTO(null, testProfile1.getUsername(), false,
-                testProfile1.getDescription(), testProfile1.getRating(), null, null);
-        ProfileDTO savedProfile = userProfileService.save(profileDTO);
+        ProfileDTO profileDTO = new ProfileDTO(null, testUserProfile1.getUsername(), testUserProfile1.getPassword(),
+                Set.of(Authority.USER.name()), false, testUserProfile1.getDescription(), testUserProfile1.getRating(), null, null);
+        ProfileDTO savedProfile = userProfileService.save(profileDTO );
 
         assertNotNull(savedProfile);
-        verify(profileRepository).save(any(Profile.class));
+        verify(userProfileRepository).save(any(UserProfile.class));
         assertEquals(profileDTO.getUsername(), savedProfile.getUsername());
         assertEquals(profileDTO.getBanned(), savedProfile.getBanned());
         assertEquals(profileDTO.getDescription(), savedProfile.getDescription());
@@ -90,29 +101,29 @@ class UserProfileServiceImplTest {
 
     @Test
     void update() {
-        when(profileRepository.save(any(Profile.class))).thenAnswer(ans -> ans.getArguments()[0]);
-        when(profileRepository.findById(1L)).thenReturn(Optional.of(testProfile1));
+        when(userProfileRepository.save(any(UserProfile.class))).thenAnswer(ans -> ans.getArguments()[0]);
+        when(userProfileRepository.findById(1L)).thenReturn(Optional.of(testUserProfile1));
 
-        ProfileDTO profileDTO = new ProfileDTO(null, null, true,
+        ProfileDTO profileDTO = new ProfileDTO(null, null, null, null, true,
                 "New description", 3.5, null, null);
         ProfileDTO savedProfile = userProfileService.update(1L, profileDTO);
 
         assertNotNull(savedProfile);
-        verify(profileRepository).save(any(Profile.class));
+        verify(userProfileRepository).save(any(UserProfile.class));
         assertEquals(profileDTO.getBanned(), savedProfile.getBanned());
         assertEquals(profileDTO.getDescription(), savedProfile.getDescription());
         assertEquals(6.75, savedProfile.getRating());
 
         assertThrows(InvalidParameterException.class, () -> userProfileService.update(null, profileDTO));
         assertThrows(InvalidParameterException.class, () -> userProfileService.update(1L,
-                new ProfileDTO( null, null, null, null, null, null, null )));
+                new ProfileDTO( null, null, null, null, null, null, null, null, null )));
     }
 
     @Test
     void deleteById() {
-        when(profileRepository.findById(1L)).thenReturn(Optional.of(testProfile1));
+        when(userProfileRepository.findById(1L)).thenReturn(Optional.of(testUserProfile1));
         userProfileService.deleteById(1L);
 
-        verify(profileRepository).deleteById(1L);
+        verify(userProfileRepository).deleteById(1L);
     }
 }

@@ -117,15 +117,16 @@ public class POI extends Post {
         this.profilePOIS.add(profilePOI);
     }
 
-    public Set<Profile> getProfiles(Boolean checkIn) {
+    public Set<UserProfile> getProfiles(Boolean checkIn) {
         Objects.requireNonNull(checkIn);
-        Set<Profile> profiles = new HashSet<>();
+        Set<UserProfile> userProfiles = new HashSet<>();
 
         profilePOIS.forEach(profilePOI -> {
-            if(checkIn == profilePOI.getCheckIn()) {profiles.add(profilePOI.getProfile());}
+            if(checkIn == profilePOI.getCheckIn()) {
+                userProfiles.add(profilePOI.getProfile());}
         });
 
-        return profiles;
+        return userProfiles;
     }
 
     public void addImage(Image Image) {

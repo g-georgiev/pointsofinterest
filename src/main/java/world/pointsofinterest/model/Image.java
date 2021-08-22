@@ -16,7 +16,7 @@ public class Image extends Multimedia {
     private POI poi;
 
     @ManyToOne
-    private Profile profile;
+    private UserProfile userProfile;
 
     @OneToOne(mappedBy = "thumbnail")
     private Video video;
@@ -25,10 +25,10 @@ public class Image extends Multimedia {
     }
 
     public Image(Long id, String description, Double rating, URL url, Byte[] bin, POI poi,
-                 Profile profile, Video video) {
+                 UserProfile userProfile, Video video) {
         super(id, description, rating, url, bin);
         this.poi = poi;
-        this.profile = profile;
+        this.userProfile = userProfile;
         this.video = video;
     }
 
@@ -40,12 +40,12 @@ public class Image extends Multimedia {
         this.poi = poi;
     }
 
-    public Profile getProfile() {
-        return profile;
+    public UserProfile getProfile() {
+        return userProfile;
     }
 
-    public void setProfile(Profile profile) {
-        this.profile = profile;
+    public void setProfile(UserProfile userProfile) {
+        this.userProfile = userProfile;
     }
 
     public Video getVideo() {
@@ -60,7 +60,7 @@ public class Image extends Multimedia {
     public String toString() {
         return "Image{" +
                 "poi=" + poi.getId() +
-                ", profile=" + profile.getUser().getUsername() +
+                ", userProfile=" + userProfile.getUsername() +
                 ", video=" + video.getId() +
                 '}';
     }

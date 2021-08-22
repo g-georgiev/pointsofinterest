@@ -4,10 +4,10 @@ import org.springframework.stereotype.Service;
 import world.pointsofinterest.api.v1.mappers.CommentMapper;
 import world.pointsofinterest.api.v1.model.CommentDTO;
 import world.pointsofinterest.model.POI;
-import world.pointsofinterest.model.Profile;
+import world.pointsofinterest.model.UserProfile;
 import world.pointsofinterest.repositories.CommentRepository;
 import world.pointsofinterest.repositories.POIRepository;
-import world.pointsofinterest.repositories.ProfileRepository;
+import world.pointsofinterest.repositories.UserProfileRepository;
 import world.pointsofinterest.services.interfaces.CommentService;
 
 import java.security.InvalidParameterException;
@@ -18,17 +18,17 @@ import java.util.stream.Collectors;
 public class CommentServiceImpl implements CommentService {
 
     private final CommentRepository commentRepository;
-    private final ProfileRepository profileRepository;
+    private final UserProfileRepository userProfileRepository;
     private final POIRepository poiRepository;
 
     private final CommentMapper commentMapper;
 
     public CommentServiceImpl(CommentRepository commentRepository,
-                              ProfileRepository profileRepository,
+                              UserProfileRepository userProfileRepository,
                               POIRepository poiRepository,
                               CommentMapper commentMapper) {
         this.commentRepository = commentRepository;
-        this.profileRepository = profileRepository;
+        this.userProfileRepository = userProfileRepository;
         this.poiRepository = poiRepository;
         this.commentMapper = commentMapper;
     }
@@ -43,16 +43,16 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public List<CommentDTO> findAllByProfile(Long id) {
-        Profile profile = profileRepository.findById(id).orElseThrow(ResourceNotFoundException::new);
-        return profile.getReceivedComments().stream()
+        UserProfile userProfile = userProfileRepository.findById(id).orElseThrow(ResourceNotFoundException::new);
+        return userProfile.getReceivedComments().stream()
                 .map(commentMapper::commentToCommentDTO)
                 .collect(Collectors.toList());
     }
 
     @Override
     public List<CommentDTO> findAllByPoster(Long id) {
-        Profile profile = profileRepository.findById(id).orElseThrow(ResourceNotFoundException::new);
-        return profile.getPostedComments().stream()
+        UserProfile userProfile = userProfileRepository.findById(id).orElseThrow(ResourceNotFoundException::new);
+        return userProfile.getPostedComments().stream()
                 .map(commentMapper::commentToCommentDTO)
                 .collect(Collectors.toList());
     }
@@ -78,21 +78,21 @@ public class CommentServiceImpl implements CommentService {
         }
         if(commentDTO.getPOIId() != null && commentDTO.getProfileId() != null ||
                 commentDTO.getPOIId() == null && commentDTO.getProfileId() == null){
-            throw new InvalidParameterException("Either POI id or profile id is required, but not both");
+            throw new InvalidParameterException("Either POI id or userProfile id is required, but not both");
         }
 
-        Profile poster = profileRepository.findById(commentDTO.getPosterId()).orElseThrow(ResourceNotFoundException::new);
+        UserProfile poster = userProfileRepository.findById(commentDTO.getPosterId()).orElseThrow(ResourceNotFoundException::new);
         POI poi = null;
-        Profile profile = null;
+        UserProfile userProfile = null;
         if(commentDTO.getPOIId() != null) {
             poi = poiRepository.findById(commentDTO.getPOIId()).orElseThrow(ResourceNotFoundException::new);
         }
         if(commentDTO.getProfileId() != null) {
-             profile = profileRepository.findById(commentDTO.getProfileId()).orElseThrow(ResourceNotFoundException::new);
+             userProfile = userProfileRepository.findById(commentDTO.getProfileId()).orElseThrow(ResourceNotFoundException::new);
         }
 
         return commentMapper.commentToCommentDTO(commentRepository.save(
-                commentMapper.commentDTOToComment(commentDTO, poster, poi, profile)));
+                commentMapper.commentDTOToComment(commentDTO, poster, poi, userProfile)));
     }
 
     @Override

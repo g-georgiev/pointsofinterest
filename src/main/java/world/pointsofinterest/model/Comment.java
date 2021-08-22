@@ -15,23 +15,23 @@ public class Comment extends BaseEntity {
     private String comment;
 
     @ManyToOne
-    private Profile poster;
+    private UserProfile poster;
 
     @ManyToOne
     private POI poi;
 
     @ManyToOne
-    private Profile profile;
+    private UserProfile userProfile;
 
     public Comment() {
     }
 
-    public Comment(Long id, String comment, Profile poster, POI poi, Profile profile) {
+    public Comment(Long id, String comment, UserProfile poster, POI poi, UserProfile userProfile) {
         super(id);
         this.comment = comment;
         this.poster = poster;
         this.poi = poi;
-        this.profile = profile;
+        this.userProfile = userProfile;
     }
 
     public String getComment() {
@@ -42,11 +42,11 @@ public class Comment extends BaseEntity {
         this.comment = comment;
     }
 
-    public Profile getPoster() {
+    public UserProfile getPoster() {
         return poster;
     }
 
-    public void setPoster(Profile poster) {
+    public void setPoster(UserProfile poster) {
         this.poster = poster;
     }
 
@@ -58,21 +58,21 @@ public class Comment extends BaseEntity {
         this.poi = poi;
     }
 
-    public Profile getProfile() {
-        return profile;
+    public UserProfile getProfile() {
+        return userProfile;
     }
 
-    public void setProfile(Profile profile) {
-        this.profile = profile;
+    public void setProfile(UserProfile userProfile) {
+        this.userProfile = userProfile;
     }
 
     @Override
     public String toString() {
         return "Comment{" +
                 "comment='" + comment + '\'' +
-                ", poster=" + poster.getUser().getUsername() +
+                ", poster=" + poster.getUsername() +
                 ", poi=" + poi.getId() +
-                ", profile=" + profile.getUser().getUsername() +
+                ", userProfile=" + userProfile.getUsername() +
                 '}';
     }
 }

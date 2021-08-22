@@ -31,9 +31,9 @@ public class CommentController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Post a comment for a user profile")
+    @Operation(summary = "Post a comment for a user userProfile or a point of interest")
     public CommentDTO createNewComment(
-            @Parameter(description = "The id of the user profile", required = true)
+            @Parameter(description = "The id of the user userProfile", required = true)
             @PathVariable Long id,
             @Parameter(description = "The data of the comment to be posted", required = true)
             @Valid

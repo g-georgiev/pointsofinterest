@@ -4,7 +4,7 @@ import org.springframework.stereotype.Component;
 import world.pointsofinterest.api.v1.model.ImageDTO;
 import world.pointsofinterest.model.Image;
 import world.pointsofinterest.model.POI;
-import world.pointsofinterest.model.Profile;
+import world.pointsofinterest.model.UserProfile;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -28,9 +28,9 @@ public class ImageMapper {
         return new ImageDTO(image.getId(), imageBin, image.getUrl(), image.getDescription(), image.getRating(), POIId, profileId);
     }
 
-    public Image imageDTOToImage(ImageDTO imageDTO, POI poi, Profile profile){
+    public Image imageDTOToImage(ImageDTO imageDTO, POI poi, UserProfile userProfile){
         return new Image(imageDTO.getId(), imageDTO.getDescription(), imageDTO.getRating(), imageDTO.getUrl(),
-                compressImage(imageDTO.getData()), poi, profile, null);
+                compressImage(imageDTO.getData()), poi, userProfile, null);
     }
 
     private Byte[] compressImage(byte[] data) {

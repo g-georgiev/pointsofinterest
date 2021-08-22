@@ -22,4 +22,6 @@ spring:
 world:
   poi:
     security:
-      enable: false
+      enable: true
+    jwt:
+      secret: muchsecret

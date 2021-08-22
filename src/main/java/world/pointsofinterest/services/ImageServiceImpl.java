@@ -1,17 +1,15 @@
 package world.pointsofinterest.services;
 
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 import world.pointsofinterest.api.v1.mappers.ImageMapper;
 import world.pointsofinterest.api.v1.model.ImageDTO;
 import world.pointsofinterest.model.POI;
-import world.pointsofinterest.model.Profile;
+import world.pointsofinterest.model.UserProfile;
 import world.pointsofinterest.repositories.ImageRepository;
 import world.pointsofinterest.repositories.POIRepository;
-import world.pointsofinterest.repositories.ProfileRepository;
+import world.pointsofinterest.repositories.UserProfileRepository;
 import world.pointsofinterest.services.interfaces.ImageService;
 
-import java.io.IOException;
 import java.security.InvalidParameterException;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,17 +17,17 @@ import java.util.stream.Collectors;
 @Service
 public class ImageServiceImpl implements ImageService {
     private final ImageRepository imageRepository;
-    private final ProfileRepository profileRepository;
+    private final UserProfileRepository userProfileRepository;
     private final POIRepository poiRepository;
 
     private final ImageMapper imageMapper;
 
     public ImageServiceImpl(ImageRepository imageRepository,
-                            ProfileRepository profileRepository,
+                            UserProfileRepository userProfileRepository,
                             POIRepository poiRepository,
                             ImageMapper imageMapper) {
         this.imageRepository = imageRepository;
-        this.profileRepository = profileRepository;
+        this.userProfileRepository = userProfileRepository;
         this.poiRepository = poiRepository;
         this.imageMapper = imageMapper;
     }
@@ -58,8 +56,8 @@ public class ImageServiceImpl implements ImageService {
 
     @Override
     public List<ImageDTO> findAllByProfile(Long id) {
-        Profile profile = profileRepository.findById(id).orElseThrow(ResourceNotFoundException::new);
-        return profile.getImageSet().stream()
+        UserProfile userProfile = userProfileRepository.findById(id).orElseThrow(ResourceNotFoundException::new);
+        return userProfile.getImageSet().stream()
                 .map(imageMapper::imageToImageDTO)
                 .collect(Collectors.toList());
     }
@@ -70,16 +68,16 @@ public class ImageServiceImpl implements ImageService {
 
 
         POI poi = null;
-        Profile profile = null;
+        UserProfile userProfile = null;
         if(imageDTO.getPoiId() != null) {
             poi = poiRepository.findById(imageDTO.getPoiId()).orElseThrow(ResourceNotFoundException::new);
         }
         if(imageDTO.getProfileId() != null) {
-            profile = profileRepository.findById(imageDTO.getProfileId()).orElseThrow(ResourceNotFoundException::new);
+            userProfile = userProfileRepository.findById(imageDTO.getProfileId()).orElseThrow(ResourceNotFoundException::new);
         }
 
         return imageMapper.imageToImageDTO(imageRepository.save(
-                imageMapper.imageDTOToImage(imageDTO, poi, profile)));
+                imageMapper.imageDTOToImage(imageDTO, poi, userProfile)));
     }
 
     @Override
@@ -87,7 +85,7 @@ public class ImageServiceImpl implements ImageService {
         if(id == null) {throw new InvalidParameterException("ID of image to update is required");}
         if(imageDTO == null || imageDTO.getDescription() == null && imageDTO.getRating() == null &&
         imageDTO.getProfileId() == null && imageDTO.getPoiId() == null){
-            throw new InvalidParameterException("Either description, rating POI id or profile id must be passed to update");
+            throw new InvalidParameterException("Either description, rating POI id or userProfile id must be passed to update");
         }
 
         return imageRepository.findById(id).map(image -> {
@@ -100,7 +98,7 @@ public class ImageServiceImpl implements ImageService {
             }
 
             if(imageDTO.getProfileId() != null){
-                image.setProfile(profileRepository.findById(imageDTO.getProfileId())
+                image.setProfile(userProfileRepository.findById(imageDTO.getProfileId())
                         .orElseThrow(ResourceNotFoundException::new));
             }
 

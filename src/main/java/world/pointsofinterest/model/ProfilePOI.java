@@ -2,13 +2,11 @@ package world.pointsofinterest.model;
 
 import world.pointsofinterest.model.superclasses.BaseEntity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "profiles_pois")
 public class ProfilePOI extends BaseEntity {
 
     @ManyToOne
@@ -17,7 +15,7 @@ public class ProfilePOI extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "profile_id")
-    private Profile profile;
+    private UserProfile userProfile;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
@@ -30,9 +28,9 @@ public class ProfilePOI extends BaseEntity {
         this.checkIn = false;
     }
 
-    public ProfilePOI(POI poi, Profile profile, Boolean checkIn) {
+    public ProfilePOI(POI poi, UserProfile userProfile, Boolean checkIn) {
         this.poi = poi;
-        this.profile = profile;
+        this.userProfile = userProfile;
         this.checkIn = checkIn;
         this.createdAt = LocalDateTime.now();
     }
@@ -45,12 +43,12 @@ public class ProfilePOI extends BaseEntity {
         this.poi = poi;
     }
 
-    public Profile getProfile() {
-        return profile;
+    public UserProfile getProfile() {
+        return userProfile;
     }
 
-    public void setProfile(Profile profile) {
-        this.profile = profile;
+    public void setProfile(UserProfile userProfile) {
+        this.userProfile = userProfile;
     }
 
     public LocalDateTime getCreatedAt() {

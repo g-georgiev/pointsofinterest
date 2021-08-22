@@ -3,6 +3,7 @@ package world.pointsofinterest.controllers.v1;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import world.pointsofinterest.api.v1.model.CommentDTO;
 import world.pointsofinterest.api.v1.model.ImageDTO;
@@ -30,12 +31,15 @@ public class UserProfileController {
     private final POIService poiService;
     private final ImageService imageService;
     private final CommentService commentService;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserProfileController(UserProfileService userProfileService, POIService poiService, ImageService imageService, CommentService commentService) {
+    public UserProfileController(UserProfileService userProfileService, POIService poiService, ImageService imageService, CommentService commentService, PasswordEncoder passwordEncoder) {
         this.userProfileService = userProfileService;
         this.poiService = poiService;
         this.imageService = imageService;
         this.commentService = commentService;
+        this.passwordEncoder = passwordEncoder;
+        userProfileService.setPasswordEncoder(passwordEncoder);
     }
 
     @GetMapping
@@ -46,10 +50,10 @@ public class UserProfileController {
     }
 
     @GetMapping({"/{id}"})
-    @Operation(summary = "Get a user profile by ID")
+    @Operation(summary = "Get a user userProfile by ID")
     @ResponseStatus(HttpStatus.OK)
     public ProfileDTO getProfileById(
-            @Parameter(description = "The id of the user profile to fetch", required = true)
+            @Parameter(description = "The id of the user userProfile to fetch", required = true)
             @PathVariable Long id){
         return userProfileService.findById(id);
     }
@@ -92,18 +96,18 @@ public class UserProfileController {
 
     @GetMapping({"/{id}" + IMAGE_PATH})
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Get a list of all profile images a user has uploaded")
+    @Operation(summary = "Get a list of all userProfile images a user has uploaded")
     public List<ImageDTO> getProfileImages(
-            @Parameter(description = "The id of the user, whose profile images to fetch", required = true)
+            @Parameter(description = "The id of the user, whose userProfile images to fetch", required = true)
             @PathVariable Long id){
         return imageService.findAllByProfile(id);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary = "Create a new user profile")
+    @Operation(summary = "Create a new user userProfile")
     public ProfileDTO createNewProfile(
-            @Parameter(description = "Data for the new user profile", required = true)
+            @Parameter(description = "Data for the new user userProfile", required = true)
             @Valid
             @RequestBody ProfileDTO ProfileDTO){
         return userProfileService.save(ProfileDTO);
@@ -111,11 +115,11 @@ public class UserProfileController {
 
     @PutMapping({"/{id}"})
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Update an exiting user profile")
+    @Operation(summary = "Update an exiting user userProfile")
     public ProfileDTO updateProfile(
-            @Parameter(description = "The id of the user profile to update", required = true)
+            @Parameter(description = "The id of the user userProfile to update", required = true)
             @PathVariable Long id,
-            @Parameter(description = "New data for the user profile to update", required = true)
+            @Parameter(description = "New data for the user userProfile to update", required = true)
             @Valid
             @RequestBody ProfileDTO ProfileDTO){
         return userProfileService.update(id, ProfileDTO);
@@ -123,7 +127,7 @@ public class UserProfileController {
 
     @DeleteMapping({"/{id}"})
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Delete a user profile")
+    @Operation(summary = "Delete a user userProfile")
     public void deleteProfile(@PathVariable Long id){
         userProfileService.deleteById(id);
     }

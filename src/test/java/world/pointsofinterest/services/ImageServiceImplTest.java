@@ -10,7 +10,7 @@ import world.pointsofinterest.api.v1.model.ImageDTO;
 import world.pointsofinterest.model.*;
 import world.pointsofinterest.repositories.ImageRepository;
 import world.pointsofinterest.repositories.POIRepository;
-import world.pointsofinterest.repositories.ProfileRepository;
+import world.pointsofinterest.repositories.UserProfileRepository;
 import world.pointsofinterest.services.interfaces.ImageService;
 
 import java.net.MalformedURLException;
@@ -32,7 +32,7 @@ class ImageServiceImplTest {
     @Mock
     private POIRepository poiRepository;
     @Mock
-    private ProfileRepository profileRepository;
+    private UserProfileRepository userProfileRepository;
     @Mock
     private ImageRepository imageRepository;
 
@@ -40,31 +40,28 @@ class ImageServiceImplTest {
 
     private Image testImage1;
     private Image testImage2;
-    private Profile testProfile1;
+    private UserProfile testUserProfile1;
     private POI testPOI1;
     private final String imageData = "some base64 encoded image";
 
     @BeforeEach
     void setUp() throws MalformedURLException {
         //Set up services
-        imageService = new ImageServiceImpl(imageRepository, profileRepository, poiRepository, new ImageMapper());
+        imageService = new ImageServiceImpl(imageRepository, userProfileRepository, poiRepository, new ImageMapper());
 
         //Set up user profiles
-        User user = new User();
-        testProfile1 = new Profile(1L, "Test profile 1", 10.0, user);
-        user.setId(1L);
-        user.setUsername("test_user1");
-        user.setProfile(testProfile1);
+        testUserProfile1 = new UserProfile(1L, "Test userProfile 1", 10.0,
+                "test_user1", "1234", null, false );
 
         //Set up POIs
         ProfilePOI profilePOI = new ProfilePOI();
         profilePOI.setId(1L);
-        profilePOI.setProfile(testProfile1);
+        profilePOI.setProfile(testUserProfile1);
         Set<ProfilePOI> profilePOIS = new HashSet<>();
         profilePOIS.add(profilePOI);
         testPOI1 = new POI(1L, "test POI", 10.0, 45.5, 90D, null, profilePOIS);
         profilePOI.setPoi(testPOI1);
-        testProfile1.addProfilePOI(profilePOI);
+        testUserProfile1.addProfilePOI(profilePOI);
 
         //Set up images
         byte[] imageBin = imageData.getBytes();
@@ -74,10 +71,10 @@ class ImageServiceImplTest {
         }
         testImage1 = new Image( 1L, "Test image 1", 2.3, null, imageBinBox, testPOI1, null, null);
 
-        testImage2 = new Image(2L, "Test image 2", 3.5, new URL("https://grid.gograph.com/big-or-small-size-matters-stock-illustration_gg77801625.jpg"), null, null, testProfile1, null);
+        testImage2 = new Image(2L, "Test image 2", 3.5, new URL("https://grid.gograph.com/big-or-small-size-matters-stock-illustration_gg77801625.jpg"), null, null, testUserProfile1, null);
 
         testPOI1.addImage(testImage1);
-        testProfile1.addImage(testImage2);
+        testUserProfile1.addImage(testImage2);
     }
 
     @Test
@@ -117,7 +114,7 @@ class ImageServiceImplTest {
 
     @Test
     void findAllByProfile() {
-        when(profileRepository.findById(1L)).thenReturn(Optional.of(testProfile1));
+        when(userProfileRepository.findById(1L)).thenReturn(Optional.of(testUserProfile1));
 
         List<ImageDTO> allImages = imageService.findAllByProfile(1L);
 
@@ -132,7 +129,7 @@ class ImageServiceImplTest {
     void save() {
         when(imageRepository.save(any(Image.class))).thenAnswer(ans -> ans.getArguments()[0]);
         when(poiRepository.findById(1L)).thenReturn(Optional.of(testPOI1));
-        when(profileRepository.findById(1L)).thenReturn(Optional.of(testProfile1));
+        when(userProfileRepository.findById(1L)).thenReturn(Optional.of(testUserProfile1));
 
         ImageDTO imageToSave = new ImageDTO(
                 null, imageData.getBytes(), null, testImage1.getDescription(), testImage1.getRating(),
@@ -161,7 +158,7 @@ class ImageServiceImplTest {
         when(imageRepository.save(any(Image.class))).thenAnswer(ans -> ans.getArguments()[0]);
         when(imageRepository.findById(1L)).thenReturn(Optional.of(new Image()));
         when(poiRepository.findById(1L)).thenReturn(Optional.of(testPOI1));
-        when(profileRepository.findById(1L)).thenReturn(Optional.of(testProfile1));
+        when(userProfileRepository.findById(1L)).thenReturn(Optional.of(testUserProfile1));
 
         ImageDTO imageToSave = new ImageDTO(
                 null, null, null, testImage2.getDescription(), testImage2.getRating(),

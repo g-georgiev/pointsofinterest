@@ -9,11 +9,11 @@ import world.pointsofinterest.api.v1.model.POIRequestDTO;
 import world.pointsofinterest.api.v1.model.POIResponseDTO;
 import world.pointsofinterest.model.Category;
 import world.pointsofinterest.model.POI;
-import world.pointsofinterest.model.Profile;
+import world.pointsofinterest.model.UserProfile;
 import world.pointsofinterest.model.ProfilePOI;
 import world.pointsofinterest.repositories.CategoryRepository;
 import world.pointsofinterest.repositories.POIRepository;
-import world.pointsofinterest.repositories.ProfileRepository;
+import world.pointsofinterest.repositories.UserProfileRepository;
 import world.pointsofinterest.services.interfaces.POIService;
 
 import java.security.InvalidParameterException;
@@ -28,17 +28,17 @@ public class POIServiceImpl implements POIService {
 
     private final POIRepository poiRepository;
     private final CategoryRepository categoryRepository;
-    private final ProfileRepository profileRepository;
+    private final UserProfileRepository userProfileRepository;
 
     private final POIMapper poiMapper;
 
     public POIServiceImpl(POIRepository poiRepository,
                           CategoryRepository categoryRepository,
-                          ProfileRepository profileRepository,
+                          UserProfileRepository userProfileRepository,
                           POIMapper poiMapper) {
         this.poiRepository = poiRepository;
         this.categoryRepository = categoryRepository;
-        this.profileRepository = profileRepository;
+        this.userProfileRepository = userProfileRepository;
         this.poiMapper = poiMapper;
     }
 
@@ -68,8 +68,8 @@ public class POIServiceImpl implements POIService {
 
     @Override
     public List<POIResponseDTO> findAllPOIsByProfile(Long id, Boolean checkIn) {
-        Profile profile = profileRepository.findById(id).orElseThrow(ResourceNotFoundException::new);
-        return profile.getProfilePOIs(checkIn)
+        UserProfile userProfile = userProfileRepository.findById(id).orElseThrow(ResourceNotFoundException::new);
+        return userProfile.getProfilePOIs(checkIn)
                 .stream()
                 .map(poiMapper::POIToPOIDTO)
                 .collect(Collectors.toList());
@@ -109,9 +109,9 @@ public class POIServiceImpl implements POIService {
     @Override
     public POIResponseDTO checkIn(Long poiId, Long profileId) {
         POI poi = poiRepository.findById(poiId).orElseThrow(ResourceNotFoundException::new);
-        Profile profile = profileRepository.findById(profileId).orElseThrow(ResourceNotFoundException::new);
+        UserProfile userProfile = userProfileRepository.findById(profileId).orElseThrow(ResourceNotFoundException::new);
 
-        poi.addProfilePOIS(new ProfilePOI(poi, profile, true));
+        poi.addProfilePOIS(new ProfilePOI(poi, userProfile, true));
         return poiMapper.POIToPOIDTO(poiRepository.save(poi));
     }
 
@@ -122,8 +122,8 @@ public class POIServiceImpl implements POIService {
         }
 
         Set<Category> categories = new HashSet<>(categoryRepository.findByIdIn(poiRequestDTO.getCategories()));
-        Set<ProfilePOI> profilePOIS = profileRepository.findByIdIn(poiRequestDTO.getPosters()).stream()
-                .map(profile -> new ProfilePOI(null, profile, false))
+        Set<ProfilePOI> profilePOIS = userProfileRepository.findByIdIn(poiRequestDTO.getPosters()).stream()
+                .map(userProfile -> new ProfilePOI(null, userProfile, false))
                 .collect(Collectors.toSet());
         POI newPOI = poiMapper.POIDTOToPOI(poiRequestDTO, categories, profilePOIS);
         newPOI.getProfilePOIS().forEach(profilePOI -> profilePOI.setPoi(newPOI));

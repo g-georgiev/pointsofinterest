@@ -29,8 +29,8 @@ public class POIRequestDTO {
     @NotEmpty(message = "Every point of interest must have a category")
     private List<Long> categories;
 
-    @NotNull(message = "Every point of interest must have a poster profile")
-    @NotEmpty(message = "Every point of interest must have a poster profile")
+    @NotNull(message = "Every point of interest must have a poster userProfile")
+    @NotEmpty(message = "Every point of interest must have a poster userProfile")
     private List<Long> posters;
 
     public POIRequestDTO(Long id, Double latitude, Double longitude, String description,

@@ -10,7 +10,7 @@ import world.pointsofinterest.api.v1.model.CommentDTO;
 import world.pointsofinterest.model.*;
 import world.pointsofinterest.repositories.CommentRepository;
 import world.pointsofinterest.repositories.POIRepository;
-import world.pointsofinterest.repositories.ProfileRepository;
+import world.pointsofinterest.repositories.UserProfileRepository;
 import world.pointsofinterest.services.interfaces.CommentService;
 
 import java.security.InvalidParameterException;
@@ -29,7 +29,7 @@ class CommentServiceImplTest {
     @Mock
     private POIRepository poiRepository;
     @Mock
-    private ProfileRepository profileRepository;
+    private UserProfileRepository userProfileRepository;
     @Mock
     private CommentRepository commentRepository;
 
@@ -37,38 +37,35 @@ class CommentServiceImplTest {
 
     private Comment testComment1;
     private Comment testComment2;
-    private Profile testProfile1;
+    private UserProfile testUserProfile1;
     private POI testPOI1;
 
     @BeforeEach
     void setUp() {
         //Set up services
-        commentService = new CommentServiceImpl(commentRepository, profileRepository, poiRepository, new CommentMapper());
+        commentService = new CommentServiceImpl(commentRepository, userProfileRepository, poiRepository, new CommentMapper());
 
         //Set up user profiles
-        User user = new User();
-        testProfile1 = new Profile(1L, "Test profile 1", 10.0, user);
-        user.setId(1L);
-        user.setUsername("test_user1");
-        user.setProfile(testProfile1);
+        testUserProfile1 = new UserProfile(1L, "Test userProfile 1", 10.0,
+                "test_user1", "1234", null, false );
 
         //Set up POIs
         ProfilePOI profilePOI = new ProfilePOI();
         profilePOI.setId(1L);
-        profilePOI.setProfile(testProfile1);
+        profilePOI.setProfile(testUserProfile1);
         Set<ProfilePOI> profilePOIS = new HashSet<>();
         profilePOIS.add(profilePOI);
         testPOI1 = new POI(1L, "test POI", 10.0, 45.5, 90D, null, profilePOIS);
         profilePOI.setPoi(testPOI1);
-        testProfile1.addProfilePOI(profilePOI);
+        testUserProfile1.addProfilePOI(profilePOI);
 
         //Set up comments
-        testComment1 = new Comment(1L, "Test comment 1", testProfile1, testPOI1, null);
-        testComment2 = new Comment(2L, "Test comment 2", testProfile1, null, testProfile1);
+        testComment1 = new Comment(1L, "Test comment 1", testUserProfile1, testPOI1, null);
+        testComment2 = new Comment(2L, "Test comment 2", testUserProfile1, null, testUserProfile1);
 
         testPOI1.addComment(testComment1);
-        testProfile1.addComment(testComment2);
-        testProfile1.setPostedComments(List.of(testComment2));
+        testUserProfile1.addComment(testComment2);
+        testUserProfile1.setPostedComments(List.of(testComment2));
     }
 
     @Test
@@ -86,7 +83,7 @@ class CommentServiceImplTest {
 
     @Test
     void findAllByProfile() {
-        when(profileRepository.findById(1L)).thenReturn(Optional.of(testProfile1));
+        when(userProfileRepository.findById(1L)).thenReturn(Optional.of(testUserProfile1));
 
         List<CommentDTO> allComments = commentService.findAllByProfile(1L);
 
@@ -99,7 +96,7 @@ class CommentServiceImplTest {
 
     @Test
     void findAllByPoster() {
-        when(profileRepository.findById(1L)).thenReturn(Optional.of(testProfile1));
+        when(userProfileRepository.findById(1L)).thenReturn(Optional.of(testUserProfile1));
 
         List<CommentDTO> allComments = commentService.findAllByPoster(1L);
 
@@ -136,7 +133,7 @@ class CommentServiceImplTest {
     void save() {
         when(commentRepository.save(any(Comment.class))).thenAnswer(ans -> ans.getArguments()[0]);
         when(poiRepository.findById(1L)).thenReturn(Optional.of(testPOI1));
-        when(profileRepository.findById(1L)).thenReturn(Optional.of(testProfile1));
+        when(userProfileRepository.findById(1L)).thenReturn(Optional.of(testUserProfile1));
 
         CommentDTO commentToSave1 = new CommentDTO(
                 null, testComment1.getComment(), testComment1.getPoster().getUsername(),
