@@ -1,6 +1,5 @@
 package world.pointsofinterest.security;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,6 +15,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 import world.pointsofinterest.security.filters.JwtRequestFilter;
 
 
@@ -26,6 +26,7 @@ import world.pointsofinterest.security.filters.JwtRequestFilter;
         securedEnabled = true,
         jsr250Enabled = true,
         prePostEnabled = true)
+@EnableSwagger2
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
@@ -64,11 +65,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
-        // We don't need CSRF for this example
+
         httpSecurity.csrf().disable()
                 // don't authenticate this particular request
                 .authorizeRequests()
-                .antMatchers("/swagger-ui/*").permitAll()
+                .antMatchers("/swagger-ui/*", "/swagger-ui.html",
+                        "/webjars/**", "/v2/**", "/swagger-resources/**").permitAll()
                 .antMatchers("/api/v1/authenticate").permitAll()
                 .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 // all other requests need to be authenticated
