@@ -7,8 +7,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import world.pointsofinterest.api.v1.model.CommentDTO;
 import world.pointsofinterest.api.v1.model.ImageDTO;
-import world.pointsofinterest.api.v1.model.ProfileDTO;
 import world.pointsofinterest.api.v1.model.POIResponseDTO;
+import world.pointsofinterest.api.v1.model.ProfileDTO;
 import world.pointsofinterest.services.interfaces.CommentService;
 import world.pointsofinterest.services.interfaces.ImageService;
 import world.pointsofinterest.services.interfaces.POIService;
@@ -20,7 +20,8 @@ import java.util.List;
 @RestController
 @RequestMapping(UserProfileController.BASE_URL)
 public class UserProfileController {
-    public static final String BASE_URL = "/api/v1/profiles";
+
+    public static final String BASE_URL = "/v1/profiles";
     public static final String IMAGE_PATH = "/images";
     public static final String POSTED_COMMENT_PATH = "/posted_comments";
     public static final String RECEIVED_COMMENT_PATH = "/comments";

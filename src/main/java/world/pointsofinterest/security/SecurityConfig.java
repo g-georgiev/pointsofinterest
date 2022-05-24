@@ -29,11 +29,20 @@ import world.pointsofinterest.security.filters.JwtRequestFilter;
 @EnableSwagger2
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
+    public static final String[] PUBLIC_PATHS = {
+            "/swagger-ui/*",
+            "/swagger-ui.html",
+            "/webjars/**",
+            "/v2/**",
+            "/swagger-resources/**"
+    };
+    
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
     private final UserDetailsService jwtUserDetailsService;
 
     private final JwtRequestFilter jwtRequestFilter;
+
 
     public SecurityConfig(JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint,
                           UserDetailsService jwtUserDetailsService,
@@ -69,9 +78,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         httpSecurity.csrf().disable()
                 // don't authenticate this particular request
                 .authorizeRequests()
-                .antMatchers("/swagger-ui/*", "/swagger-ui.html",
-                        "/webjars/**", "/v2/**", "/swagger-resources/**").permitAll()
-                .antMatchers("/api/v1/authenticate").permitAll()
+                .antMatchers(PUBLIC_PATHS).permitAll()
+                .antMatchers("/v1/authenticate").permitAll()
                 .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 // all other requests need to be authenticated
                 .anyRequest().authenticated().and()

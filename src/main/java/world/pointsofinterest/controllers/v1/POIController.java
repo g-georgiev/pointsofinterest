@@ -9,7 +9,6 @@ import world.pointsofinterest.api.v1.model.ImageDTO;
 import world.pointsofinterest.api.v1.model.POIRequestDTO;
 import world.pointsofinterest.api.v1.model.POIResponseDTO;
 import world.pointsofinterest.services.interfaces.CommentService;
-import world.pointsofinterest.services.interfaces.CommonService;
 import world.pointsofinterest.services.interfaces.ImageService;
 import world.pointsofinterest.services.interfaces.POIService;
 
@@ -20,7 +19,7 @@ import java.util.List;
 @RestController
 @RequestMapping(POIController.BASE_URL)
 public class POIController {
-    public static final String BASE_URL = "/api/v1/poi";
+    public static final String BASE_URL = "/v1/poi";
     public static final String POI_IMAGE_PATH = "/images";
     public static final String POI_VIDEO_PATH = "/videos";
     public static final String POI_COMMENT_PATH = "/comments";
