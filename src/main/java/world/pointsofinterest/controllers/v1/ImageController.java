@@ -8,13 +8,12 @@ import world.pointsofinterest.api.v1.model.ImageDTO;
 import world.pointsofinterest.services.interfaces.ImageService;
 
 import javax.validation.Valid;
-import java.io.IOException;
 import java.util.List;
 
 @RestController
 @RequestMapping(ImageController.BASE_URL)
 public class ImageController {
-    public static final String BASE_URL = "/api/v1/images";
+    public static final String BASE_URL = "/v1/images";
 
     private final ImageService imageService;
 

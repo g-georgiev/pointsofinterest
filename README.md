@@ -9,8 +9,8 @@ The Points of Interest Project is a REST API for the management of POIs. It's go
 # Used technologies
 * Spring Boot
 * Spring Security with JWT
-* Swagger2, accessible at /swagger-ui/
-* PostgreSQL 
+* Swagger2, accessible at /api/swagger-ui/
+* PostgreSQL
 * https://github.com/JavadocMD/simplelatlng
 
 The API is currently in development but a large portion of the code base is already usable. Further development is planned to proceed alongside front-end development.

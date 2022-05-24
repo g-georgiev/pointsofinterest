@@ -5,7 +5,6 @@ import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import world.pointsofinterest.api.v1.model.CommentDTO;
-import world.pointsofinterest.api.v1.model.ImageDTO;
 import world.pointsofinterest.services.interfaces.CommentService;
 
 import javax.validation.Valid;
@@ -14,7 +13,7 @@ import java.util.List;
 @RestController
 @RequestMapping(CommentController.BASE_URL)
 public class CommentController {
-    public static final String BASE_URL = "/api/v1/comments";
+    public static final String BASE_URL = "/v1/comments";
 
     private final CommentService commentService;
 

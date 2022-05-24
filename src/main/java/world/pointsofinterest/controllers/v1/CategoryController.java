@@ -1,11 +1,7 @@
 package world.pointsofinterest.controllers.v1;
 
-import io.swagger.annotations.Api;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import world.pointsofinterest.api.v1.model.CategoryDTO;
@@ -20,7 +16,7 @@ import java.util.List;
 @RestController
 @RequestMapping(CategoryController.BASE_URL)
 public class CategoryController {
-    public static final String BASE_URL = "/api/v1/categories";
+    public static final String BASE_URL = "/v1/categories";
     public static final String POI_PATH = "/poi";
 
     private final CategoryService categoryService;

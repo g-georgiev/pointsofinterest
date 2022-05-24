@@ -1,17 +1,14 @@
 package world.pointsofinterest.controllers.v1;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 import world.pointsofinterest.api.v1.model.AuthRequestDTO;
 import world.pointsofinterest.api.v1.model.AuthResponseDTO;
 import world.pointsofinterest.services.interfaces.JwtTokenService;
@@ -35,7 +32,7 @@ public class AuthenticationController {
         this.userDetailsService = userDetailsService;
     }
 
-    @PostMapping("/api/v1/authenticate")
+    @PostMapping("/v1/authenticate")
     public AuthResponseDTO authenticate(@RequestBody @Valid final AuthRequestDTO authenticationRequest)
             throws Exception {
         authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());

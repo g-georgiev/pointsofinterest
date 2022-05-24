@@ -25,3 +25,6 @@ world:
       enable: true
     jwt:
       secret: muchsecret
+server:
+  servlet:
+    context-path: /api
